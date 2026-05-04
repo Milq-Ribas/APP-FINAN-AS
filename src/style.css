@@ -61,7 +61,7 @@ select:focus {
   margin: 0 auto;
   position: relative;
   overflow-x: hidden;
-  padding-bottom: 92px;
+  padding-bottom: 82px;
 }
 
 .loading-screen {
@@ -72,20 +72,20 @@ select:focus {
 }
 
 .page {
-  padding: 36px 16px 18px;
+  padding: 28px 16px 14px;
 }
 
 .home-page {
-  padding-top: 36px;
+  padding-top: 34px;
 }
 
 .transactions-page {
-  padding-top: 10px;
+  padding-top: 8px;
 }
 
 .home-header {
   text-align: center;
-  margin-bottom: 18px;
+  margin-bottom: 17px;
 }
 
 .home-header h1 {
@@ -98,9 +98,9 @@ select:focus {
 }
 
 .home-header p {
-  margin: 14px 0 0;
+  margin: 12px 0 0;
   color: #8a8a8a;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 700;
   letter-spacing: -0.04em;
 }
@@ -115,7 +115,7 @@ select:focus {
 }
 
 .balance-card {
-  padding: 18px 24px 20px;
+  padding: 17px 22px 19px;
 }
 
 .month-selector {
@@ -136,9 +136,9 @@ select:focus {
 }
 
 .month-selector.compact {
-  width: 118px;
-  height: 36px;
-  font-size: 15px;
+  width: 112px;
+  height: 35px;
+  font-size: 14px;
   margin: 0;
 }
 
@@ -157,17 +157,17 @@ select:focus {
 .soft-label {
   display: block;
   color: #b6b6b6;
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 300;
-  margin-top: 10px;
+  margin-top: 9px;
 }
 
 .main-balance {
   display: block;
-  font-size: clamp(45px, 13vw, 58px);
+  font-size: clamp(42px, 12vw, 55px);
   line-height: 1.02;
   letter-spacing: -0.075em;
-  margin: 14px 0 20px;
+  margin: 13px 0 19px;
   color: #f2f2f2;
   font-weight: 800;
   white-space: nowrap;
@@ -176,13 +176,13 @@ select:focus {
 .money-pills {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 14px;
 }
 
 .money-pills span {
   display: block;
   color: #c8c8c8;
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 300;
   margin-bottom: 8px;
 }
@@ -191,9 +191,9 @@ select:focus {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 40px;
+  min-height: 39px;
   border-radius: 999px;
-  font-size: 20px;
+  font-size: 19px;
   line-height: 1;
   font-weight: 800;
   white-space: nowrap;
@@ -211,76 +211,111 @@ select:focus {
 }
 
 .info-card {
-  min-height: 74px;
-  padding: 14px 28px;
-  margin-top: 16px;
+  min-height: 70px;
+  padding: 13px 24px;
+  margin-top: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
 }
 
 .info-card span {
   color: #b8b8b8;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 300;
   white-space: nowrap;
 }
 
 .info-card strong {
   color: #ffffff;
-  font-size: clamp(29px, 8.4vw, 38px);
+  font-size: clamp(27px, 8vw, 36px);
   font-weight: 800;
   letter-spacing: -0.065em;
   white-space: nowrap;
 }
 
 .transactions-page h2 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   text-align: center;
   color: #8e8e8e;
-  font-size: 29px;
+  font-size: 28px;
   line-height: 1;
   font-weight: 800;
   letter-spacing: -0.055em;
 }
 
 .transactions-panel {
-  min-height: calc(100vh - 132px);
-  padding: 14px;
+  height: calc(100vh - 112px);
+  padding: 12px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .filters-row {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-bottom: 8px;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
 }
 
 .status-filter {
-  width: 118px;
-  height: 36px;
+  width: 100%;
+  height: 35px;
   margin: 0;
-  padding: 0 12px;
+  padding: 0 8px;
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 12px;
   text-align: center;
+}
+
+.filter-total {
+  min-height: 34px;
+  margin-bottom: 8px;
+  padding: 7px 11px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.filter-total span {
+  color: #a7a7a7;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.filter-total strong {
+  color: #7dff86;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
 }
 
 .transactions-list {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   flex: 1;
   align-content: start;
+  overflow-y: auto;
+  padding-right: 2px;
+  padding-bottom: 12px;
+}
+
+.transactions-list::-webkit-scrollbar {
+  width: 0;
 }
 
 .date-group h3 {
   text-align: center;
-  margin: 8px 0 10px;
-  font-size: 16px;
+  margin: 7px 0 9px;
+  font-size: 15px;
   color: #ffffff;
   font-weight: 800;
 }
@@ -295,7 +330,7 @@ select:focus {
   grid-template-columns: 1fr auto;
   gap: 8px;
   align-items: center;
-  min-height: 58px;
+  min-height: 56px;
   padding: 10px 12px;
   border-radius: 11px;
   position: relative;
@@ -330,55 +365,69 @@ select:focus {
   color: #675a1b;
 }
 
+.transaction-info {
+  min-width: 0;
+}
+
 .transaction-info strong,
 .transaction-value strong {
   display: block;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.12;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
+}
+
+.transaction-info strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .transaction-info span,
 .transaction-value span {
   display: block;
   margin-top: 4px;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1;
-  font-weight: 400;
+  font-weight: 500;
   opacity: 0.82;
 }
 
 .transaction-value {
   text-align: right;
-  min-width: 92px;
+  min-width: 86px;
 }
 
 .forecast-box {
-  margin-top: auto;
+  margin-top: 8px;
+  min-height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 10px;
-  padding: 12px;
+  padding: 9px 11px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .forecast-box span {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 800;
 }
 
 .forecast-positive {
-  font-size: 16px;
+  font-size: 15px;
   color: #7dff86;
   font-weight: 800;
+  letter-spacing: -0.04em;
 }
 
 .forecast-negative {
-  font-size: 16px;
+  font-size: 15px;
   color: #ff5c5c;
   font-weight: 800;
+  letter-spacing: -0.04em;
 }
 
 .empty-state {
@@ -393,7 +442,7 @@ select:focus {
   bottom: 0;
   transform: translateX(-50%);
   width: min(100%, 430px);
-  height: 68px;
+  height: 67px;
   padding: 10px 30px;
   border-radius: 13px 13px 0 0;
   background: #1f1f1f;
@@ -419,10 +468,10 @@ select:focus {
 }
 
 .bottom-nav .add-button {
-  width: 72px;
-  height: 72px;
+  width: 70px;
+  height: 70px;
   justify-self: center;
-  margin-top: -42px;
+  margin-top: -41px;
   border-radius: 50%;
   background: #7dff86;
   color: #1f1f1f;
@@ -444,6 +493,8 @@ select:focus {
 
 .modal-card {
   width: min(100%, 430px);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
   background: #202020;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 24px;
@@ -451,6 +502,10 @@ select:focus {
   display: grid;
   gap: 12px;
   box-shadow: 0 -10px 70px rgba(0, 0, 0, 0.5);
+}
+
+.modal-card::-webkit-scrollbar {
+  width: 0;
 }
 
 .modal-header {
@@ -591,11 +646,35 @@ select:focus {
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35) inset;
 }
 
+.status-secondary-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.status-secondary-actions button {
+  min-height: 44px;
+  border-radius: 14px;
+  background: #303030;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.status-secondary-actions .delete-secondary {
+  background: #331b1b;
+  color: #ff7777;
+}
+
 .auth-screen {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
-  padding: 20px;
+  padding: 16px;
 }
 
 .auth-card {
@@ -603,7 +682,7 @@ select:focus {
   background: #202020;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 24px;
-  padding: 24px;
+  padding: 22px;
   display: grid;
   gap: 12px;
 }
@@ -617,9 +696,86 @@ select:focus {
 }
 
 .auth-card p {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   color: #8d8d8d;
-  font-size: 17px;
+  font-size: 16px;
+}
+
+@media (max-height: 720px) {
+  .home-page {
+    padding-top: 22px;
+  }
+
+  .home-header {
+    margin-bottom: 12px;
+  }
+
+  .home-header h1 {
+    font-size: 29px;
+  }
+
+  .home-header p {
+    font-size: 19px;
+    margin-top: 9px;
+  }
+
+  .balance-card {
+    padding: 15px 20px 17px;
+  }
+
+  .main-balance {
+    font-size: 42px;
+    margin: 10px 0 15px;
+  }
+
+  .soft-label {
+    font-size: 18px;
+  }
+
+  .info-card {
+    min-height: 62px;
+    margin-top: 12px;
+  }
+
+  .info-card strong {
+    font-size: 28px;
+  }
+
+  .transactions-page h2 {
+    font-size: 25px;
+  }
+
+  .transactions-panel {
+    height: calc(100vh - 104px);
+  }
+
+  .transaction-item {
+    min-height: 52px;
+    padding: 8px 10px;
+  }
+
+  .forecast-box {
+    min-height: 38px;
+  }
+
+  .auth-screen {
+    align-items: start;
+    padding-top: 22px;
+  }
+
+  .auth-card {
+    padding: 18px;
+    gap: 10px;
+  }
+
+  .auth-card h1 {
+    font-size: 28px;
+  }
+
+  .auth-card input,
+  .auth-card button {
+    min-height: 46px;
+  }
 }
 
 @media (max-width: 380px) {
@@ -642,20 +798,56 @@ select:focus {
   }
 
   .main-balance {
-    font-size: 43px;
+    font-size: 41px;
+  }
+
+  .money-pills {
+    gap: 10px;
+  }
+
+  .pill {
+    font-size: 17px;
   }
 
   .info-card {
-    padding-left: 22px;
-    padding-right: 22px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
   .info-card span {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .info-card strong {
-    font-size: 29px;
+    font-size: 27px;
+  }
+
+  .filters-row {
+    gap: 6px;
+  }
+
+  .month-selector.compact {
+    width: 100%;
+    font-size: 13px;
+  }
+
+  .status-filter {
+    font-size: 11px;
+    padding: 0 6px;
+  }
+
+  .transaction-info strong,
+  .transaction-value strong {
+    font-size: 13px;
+  }
+
+  .transaction-info span,
+  .transaction-value span {
+    font-size: 11px;
+  }
+
+  .transaction-value {
+    min-width: 76px;
   }
 
   .bottom-nav {

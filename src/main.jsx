@@ -1,28 +1,41 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { supabase } from './lib/supabase'
-import { BarChart3, ReceiptText, Plus, UserCircle, LogOut, ChevronDown, X } from 'lucide-react'
+import {
+  BarChart3,
+  ReceiptText,
+  Plus,
+  UserCircle,
+  LogOut,
+  ChevronDown,
+  X,
+  Pencil,
+  Trash2
+} from 'lucide-react'
 import './style.css'
 
 const today = new Date().toISOString().slice(0, 10)
 const currentMonth = new Date().toISOString().slice(0, 7)
 
 const initialForm = {
+  id: null,
   description: '',
   amount: '',
   type: 'expense',
   category: 'Moradia',
-  person: 'Casal',
   due_date: today,
   status: 'pending',
   recurrence: 'none',
-  repeat_months: '6'
+  repeat_count: '6',
+  installment_total: '1'
 }
 
 const monthNames = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ]
+
+const installmentOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 24, 36, 48]
 
 function formatMoney(value) {
   return Number(value || 0).toLocaleString('pt-BR', {
@@ -37,6 +50,13 @@ function addMonths(dateString, amount) {
   return date.toISOString().slice(0, 10)
 }
 
+function addWeeks(dateString, amount) {
+  const [year, month, day] = dateString.split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+  date.setDate(date.getDate() + amount * 7)
+  return date.toISOString().slice(0, 10)
+}
+
 function getMonthLabel(monthValue) {
   const [, month] = monthValue.split('-').map(Number)
   return monthNames[month - 1] || 'Mês'
@@ -48,7 +68,13 @@ function getDayLabel(dateString) {
 }
 
 function getInstallmentsLabel(item) {
-  if (item.recurrence === 'monthly') return 'RECORRENTE'
+  if (item.installment_total && Number(item.installment_total) > 1) {
+    return `${item.installment_current || 1} / ${item.installment_total} X`
+  }
+
+  if (item.recurrence === 'monthly') return 'RECORRENTE MENSAL'
+  if (item.recurrence === 'weekly') return 'RECORRENTE SEMANAL'
+
   return item.category?.toUpperCase() || 'LANÇAMENTO'
 }
 
@@ -73,6 +99,7 @@ function App() {
   const [form, setForm] = useState(initialForm)
   const [monthFilter, setMonthFilter] = useState(currentMonth)
   const [statusFilter, setStatusFilter] = useState('all')
+  const [typeFilter, setTypeFilter] = useState('all')
   const [message, setMessage] = useState('')
   const [view, setView] = useState('home')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -129,25 +156,97 @@ function App() {
     setIsProfileOpen(false)
   }
 
-  async function createTransaction(event) {
+  function openCreateModal() {
+    setForm(initialForm)
+    setIsModalOpen(true)
+  }
+
+  function openEditModal(transaction) {
+    setSelectedTransaction(null)
+
+    setForm({
+      id: transaction.id,
+      description: transaction.description || '',
+      amount: String(transaction.amount || ''),
+      type: transaction.type || 'expense',
+      category: transaction.category || 'Moradia',
+      due_date: transaction.due_date || today,
+      status: transaction.status || 'pending',
+      recurrence: 'none',
+      repeat_count: '1',
+      installment_total: String(transaction.installment_total || 1)
+    })
+
+    setIsModalOpen(true)
+  }
+
+  async function saveTransaction(event) {
     event.preventDefault()
     setMessage('')
 
-    const repeatCount = form.recurrence === 'monthly' ? Number(form.repeat_months) : 1
+    if (form.id) {
+      const { error } = await supabase
+        .from('transactions')
+        .update({
+          description: form.description,
+          amount: Number(form.amount),
+          type: form.type,
+          category: form.category,
+          due_date: form.due_date,
+          status: form.status,
+          recurrence: 'none',
+          installment_current: 1,
+          installment_total: Number(form.installment_total || 1),
+          person: 'Casal'
+        })
+        .eq('id', form.id)
+
+      if (error) {
+        setMessage(error.message)
+        return
+      }
+
+      setForm(initialForm)
+      setIsModalOpen(false)
+      fetchTransactions()
+      return
+    }
+
+    const isInstallment = Number(form.installment_total) > 1
+    const repeatCount = isInstallment
+      ? Number(form.installment_total)
+      : form.recurrence === 'none'
+        ? 1
+        : Number(form.repeat_count)
+
     const recurrenceGroupId = crypto.randomUUID()
 
-    const rows = Array.from({ length: repeatCount }).map((_, index) => ({
-      description: form.description,
-      amount: Number(form.amount),
-      type: form.type,
-      category: form.category,
-      person: form.person,
-      due_date: addMonths(form.due_date, index),
-      status: form.status,
-      recurrence: form.recurrence,
-      recurrence_group_id: form.recurrence === 'monthly' ? recurrenceGroupId : null,
-      user_id: session.user.id
-    }))
+    const rows = Array.from({ length: repeatCount }).map((_, index) => {
+      let dueDate = form.due_date
+
+      if (isInstallment || form.recurrence === 'monthly') {
+        dueDate = addMonths(form.due_date, index)
+      }
+
+      if (!isInstallment && form.recurrence === 'weekly') {
+        dueDate = addWeeks(form.due_date, index)
+      }
+
+      return {
+        description: form.description,
+        amount: Number(form.amount),
+        type: form.type,
+        category: form.category,
+        person: 'Casal',
+        due_date: dueDate,
+        status: form.status,
+        recurrence: isInstallment ? 'installment' : form.recurrence,
+        recurrence_group_id: repeatCount > 1 ? recurrenceGroupId : null,
+        installment_current: isInstallment ? index + 1 : 1,
+        installment_total: isInstallment ? Number(form.installment_total) : 1,
+        user_id: session.user.id
+      }
+    })
 
     const { error } = await supabase.from('transactions').insert(rows)
 
@@ -176,14 +275,33 @@ function App() {
     fetchTransactions()
   }
 
+  async function deleteTransaction(id) {
+    const confirmed = window.confirm('Deseja excluir esta transação?')
+    if (!confirmed) return
+
+    const { error } = await supabase
+      .from('transactions')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      setMessage(error.message)
+      return
+    }
+
+    setSelectedTransaction(null)
+    fetchTransactions()
+  }
+
   const monthTransactions = useMemo(() => {
     return transactions.filter(item => item.due_date?.startsWith(monthFilter))
   }, [transactions, monthFilter])
 
   const filteredTransactions = useMemo(() => {
-    if (statusFilter === 'all') return monthTransactions
-    return monthTransactions.filter(item => item.status === statusFilter)
-  }, [monthTransactions, statusFilter])
+    return monthTransactions
+      .filter(item => statusFilter === 'all' || item.status === statusFilter)
+      .filter(item => typeFilter === 'all' || item.type === typeFilter)
+  }, [monthTransactions, statusFilter, typeFilter])
 
   const groupedTransactions = useMemo(() => {
     return filteredTransactions.reduce((groups, item) => {
@@ -195,11 +313,15 @@ function App() {
   }, [filteredTransactions])
 
   const summary = useMemo(() => {
-    const income = monthTransactions
+    const receivedIncome = monthTransactions
+      .filter(item => item.type === 'income' && item.status === 'paid')
+      .reduce((sum, item) => sum + Number(item.amount), 0)
+
+    const allIncome = monthTransactions
       .filter(item => item.type === 'income')
       .reduce((sum, item) => sum + Number(item.amount), 0)
 
-    const expenses = monthTransactions
+    const allExpenses = monthTransactions
       .filter(item => item.type === 'expense')
       .reduce((sum, item) => sum + Number(item.amount), 0)
 
@@ -215,16 +337,20 @@ function App() {
       .filter(item => item.type === 'income' && item.status === 'pending')
       .reduce((sum, item) => sum + Number(item.amount), 0)
 
+    const filteredTotal = filteredTransactions.reduce((sum, item) => sum + Number(item.amount), 0)
+
     return {
-      income,
-      expenses,
+      receivedIncome,
+      allIncome,
+      allExpenses,
       paidExpenses,
       pendingExpenses,
       pendingIncome,
-      accountBalance: income - paidExpenses,
-      expectedBalance: income + pendingIncome - paidExpenses - pendingExpenses
+      filteredTotal,
+      accountBalance: receivedIncome - paidExpenses,
+      expectedBalance: receivedIncome + pendingIncome - paidExpenses - pendingExpenses
     }
-  }, [monthTransactions])
+  }, [monthTransactions, filteredTransactions])
 
   const expectedBalanceText =
     summary.expectedBalance < 0
@@ -274,12 +400,12 @@ function App() {
 
             <div className="money-pills">
               <div>
-                <span>Receitas</span>
-                <strong className="pill green-pill">{formatMoney(summary.income)}</strong>
+                <span>Recebidas</span>
+                <strong className="pill green-pill">{formatMoney(summary.receivedIncome)}</strong>
               </div>
               <div>
                 <span>Despesas</span>
-                <strong className="pill red-pill">{formatMoney(summary.expenses)}</strong>
+                <strong className="pill red-pill">{formatMoney(summary.allExpenses)}</strong>
               </div>
             </div>
           </section>
@@ -302,6 +428,17 @@ function App() {
                 <option value="pending">Pendentes</option>
                 <option value="paid">Pagos</option>
               </select>
+
+              <select className="status-filter" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+                <option value="all">Tudo</option>
+                <option value="income">Receitas</option>
+                <option value="expense">Despesas</option>
+              </select>
+            </div>
+
+            <div className="filter-total">
+              <span>Soma do filtro</span>
+              <strong>{formatMoney(summary.filteredTotal)}</strong>
             </div>
 
             <div className="transactions-list">
@@ -320,11 +457,6 @@ function App() {
                           className={`transaction-item ${state.className}`}
                           key={item.id}
                           onClick={() => setSelectedTransaction(item)}
-                          onKeyDown={(event) => {
-                            if (event.key === 'Enter' || event.key === ' ') {
-                              setSelectedTransaction(item)
-                            }
-                          }}
                           tabIndex={0}
                           role="button"
                         >
@@ -356,7 +488,7 @@ function App() {
       <BottomNav
         activeView={view}
         setView={setView}
-        openAdd={() => setIsModalOpen(true)}
+        openAdd={openCreateModal}
         openProfile={() => setIsProfileOpen(true)}
         signOut={signOut}
       />
@@ -365,7 +497,7 @@ function App() {
         <TransactionModal
           form={form}
           setForm={setForm}
-          onSubmit={createTransaction}
+          onSubmit={saveTransaction}
           onClose={() => setIsModalOpen(false)}
           message={message}
         />
@@ -384,6 +516,8 @@ function App() {
           transaction={selectedTransaction}
           onClose={() => setSelectedTransaction(null)}
           onUpdateStatus={updateTransactionStatus}
+          onEdit={openEditModal}
+          onDelete={deleteTransaction}
         />
       )}
     </main>
@@ -436,11 +570,14 @@ function BottomNav({ activeView, setView, openAdd, openProfile, signOut }) {
 }
 
 function TransactionModal({ form, setForm, onSubmit, onClose, message }) {
+  const isEditing = Boolean(form.id)
+  const isInstallment = Number(form.installment_total) > 1
+
   return (
     <div className="modal-backdrop">
       <form className="modal-card" onSubmit={onSubmit}>
         <div className="modal-header">
-          <h2>Novo lançamento</h2>
+          <h2>{isEditing ? 'Editar lançamento' : 'Novo lançamento'}</h2>
           <button type="button" onClick={onClose} aria-label="Fechar"><X size={22} /></button>
         </div>
 
@@ -472,30 +609,48 @@ function TransactionModal({ form, setForm, onSubmit, onClose, message }) {
           <option>Outros</option>
         </select>
 
-        <div className="two-columns">
-          <select value={form.person} onChange={e => setForm({ ...form, person: e.target.value })}>
-            <option>Eu</option>
-            <option>Esposa</option>
-            <option>Casal</option>
-          </select>
+        <input type="date" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} />
 
-          <input type="date" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} />
-        </div>
+        {!isEditing && (
+          <>
+            <select
+              value={form.installment_total}
+              onChange={e => setForm({ ...form, installment_total: e.target.value, recurrence: 'none' })}
+            >
+              {installmentOptions.map(option => (
+                <option key={option} value={option}>
+                  {option === 1 ? 'Sem parcelamento' : `${option}x`}
+                </option>
+              ))}
+            </select>
 
-        <select value={form.recurrence} onChange={e => setForm({ ...form, recurrence: e.target.value })}>
-          <option value="none">Não repetir</option>
-          <option value="monthly">Repetir mensalmente</option>
-        </select>
+            {!isInstallment && (
+              <div className="two-columns">
+                <select value={form.recurrence} onChange={e => setForm({ ...form, recurrence: e.target.value })}>
+                  <option value="none">Não repetir</option>
+                  <option value="weekly">Semanal</option>
+                  <option value="monthly">Mensal</option>
+                </select>
 
-        {form.recurrence === 'monthly' && (
-          <select value={form.repeat_months} onChange={e => setForm({ ...form, repeat_months: e.target.value })}>
-            <option value="3">3 meses</option>
-            <option value="6">6 meses</option>
-            <option value="12">12 meses</option>
-          </select>
+                {form.recurrence !== 'none' && (
+                  <select value={form.repeat_count} onChange={e => setForm({ ...form, repeat_count: e.target.value })}>
+                    <option value="4">4 vezes</option>
+                    <option value="6">6 vezes</option>
+                    <option value="12">12 vezes</option>
+                    <option value="24">24 vezes</option>
+                    <option value="36">36 vezes</option>
+                    <option value="48">48 vezes</option>
+                  </select>
+                )}
+              </div>
+            )}
+          </>
         )}
 
-        <button className="submit-button" type="submit">Adicionar</button>
+        <button className="submit-button" type="submit">
+          {isEditing ? 'Salvar alterações' : 'Adicionar'}
+        </button>
+
         {message && <p className="message">{message}</p>}
       </form>
     </div>
@@ -520,7 +675,7 @@ function ProfileModal({ email, onClose, signOut }) {
   )
 }
 
-function TransactionStatusModal({ transaction, onClose, onUpdateStatus }) {
+function TransactionStatusModal({ transaction, onClose, onUpdateStatus, onEdit, onDelete }) {
   const isIncome = transaction.type === 'income'
   const currentState = getTransactionState(transaction)
 
@@ -557,6 +712,18 @@ function TransactionStatusModal({ transaction, onClose, onUpdateStatus }) {
             onClick={() => onUpdateStatus(transaction.id, 'pending')}
           >
             {isIncome ? 'Não recebi' : 'Não paguei'}
+          </button>
+        </div>
+
+        <div className="status-secondary-actions">
+          <button type="button" onClick={() => onEdit(transaction)}>
+            <Pencil size={17} />
+            Editar
+          </button>
+
+          <button type="button" className="delete-secondary" onClick={() => onDelete(transaction.id)}>
+            <Trash2 size={17} />
+            Excluir
           </button>
         </div>
       </section>
