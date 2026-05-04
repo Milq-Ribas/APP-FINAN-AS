@@ -10,7 +10,8 @@ import {
   ChevronDown,
   X,
   Pencil,
-  Trash2
+  Trash2,
+  Download
 } from 'lucide-react'
 import './style.css'
 
@@ -105,6 +106,8 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [selectedTransaction, setSelectedTransaction] = useState(null)
+  const [deferredPrompt, setDeferredPrompt] = useState(null)
+  const [installMessage, setInstallMessage] = useState('')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -122,6 +125,19 @@ function App() {
   useEffect(() => {
     if (session) fetchTransactions()
   }, [session])
+
+  useEffect(() => {
+    function handleBeforeInstallPrompt(event) {
+      event.preventDefault()
+      setDeferredPrompt(event)
+    }
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    }
+  }, [])
 
   async function fetchTransactions() {
     const { data, error } = await supabase
@@ -154,6 +170,36 @@ function App() {
     await supabase.auth.signOut()
     setTransactions([])
     setIsProfileOpen(false)
+  }
+
+  async function installApp() {
+    setInstallMessage('')
+
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true
+
+    if (isStandalone) {
+      setInstallMessage('O app já está instalado.')
+      return
+    }
+
+    if (!deferredPrompt) {
+      setInstallMessage('No Android, toque no menu do navegador e escolha “Instalar app” ou “Adicionar à tela inicial”. No iPhone, use Compartilhar > Adicionar à Tela de Início.')
+      return
+    }
+
+    deferredPrompt.prompt()
+
+    const result = await deferredPrompt.userChoice
+
+    if (result.outcome === 'accepted') {
+      setInstallMessage('Instalação iniciada.')
+    } else {
+      setInstallMessage('Instalação cancelada.')
+    }
+
+    setDeferredPrompt(null)
   }
 
   function openCreateModal() {
@@ -317,10 +363,6 @@ function App() {
       .filter(item => item.type === 'income' && item.status === 'paid')
       .reduce((sum, item) => sum + Number(item.amount), 0)
 
-    const allIncome = monthTransactions
-      .filter(item => item.type === 'income')
-      .reduce((sum, item) => sum + Number(item.amount), 0)
-
     const allExpenses = monthTransactions
       .filter(item => item.type === 'expense')
       .reduce((sum, item) => sum + Number(item.amount), 0)
@@ -341,7 +383,6 @@ function App() {
 
     return {
       receivedIncome,
-      allIncome,
       allExpenses,
       paidExpenses,
       pendingExpenses,
@@ -508,6 +549,8 @@ function App() {
           email={session.user.email}
           onClose={() => setIsProfileOpen(false)}
           signOut={signOut}
+          installApp={installApp}
+          installMessage={installMessage}
         />
       )}
 
@@ -657,7 +700,7 @@ function TransactionModal({ form, setForm, onSubmit, onClose, message }) {
   )
 }
 
-function ProfileModal({ email, onClose, signOut }) {
+function ProfileModal({ email, onClose, signOut, installApp, installMessage }) {
   return (
     <div className="modal-backdrop">
       <section className="modal-card profile-card">
@@ -668,6 +711,13 @@ function ProfileModal({ email, onClose, signOut }) {
 
         <p className="profile-label">Logado como</p>
         <strong className="profile-email">{email}</strong>
+
+        <button className="install-button" onClick={installApp}>
+          <Download size={18} />
+          Instalar app
+        </button>
+
+        {installMessage && <p className="install-message">{installMessage}</p>}
 
         <button className="submit-button" onClick={signOut}>Sair da conta</button>
       </section>

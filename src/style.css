@@ -575,6 +575,30 @@ select:focus {
   word-break: break-all;
 }
 
+.install-button {
+  min-height: 48px;
+  border-radius: 999px;
+  background: #303030;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.install-message {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(125, 255, 134, 0.08);
+  border: 1px solid rgba(125, 255, 134, 0.18);
+  color: #d8ffd9;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .status-card {
   gap: 14px;
 }
