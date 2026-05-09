@@ -85,8 +85,8 @@ function getTransactionState(item) {
   const isOverdue = !isPaid && item.due_date < today
 
   if (isOverdue) return { label: 'ATRASADO', className: 'overdue' }
-  if (isPaid && isIncome) return { label: 'RECEBIDO', className: 'paid' }
-  if (isPaid) return { label: 'PAGO', className: 'paid' }
+  if (isPaid && isIncome) return { label: 'RECEBIDO', className: 'paid income-paid' }
+  if (isPaid) return { label: 'PAGO', className: 'paid expense-paid' }
   if (isIncome) return { label: 'A RECEBER', className: 'income-pending' }
   return { label: 'A PAGAR', className: 'expense-pending' }
 }
