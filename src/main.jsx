@@ -307,7 +307,7 @@ function App() {
         person: 'Casal',
         due_date: dueDate,
         status: form.status,
-        recurrence: isInstallment ? 'installment' : form.recurrence,
+        recurrence: isInstallment ? 'none' : form.recurrence,
         recurrence_group_id: repeatCount > 1 ? recurrenceGroupId : null,
         installment_current: isInstallment ? index + 1 : 1,
         installment_total: isInstallment ? Number(form.installment_total) : 1,
@@ -717,36 +717,43 @@ function TransactionModal({ form, setForm, onSubmit, onClose, message }) {
 
         {!isEditing && (
           <div className="form-group">
-            <label className="form-label">Parcelamento</label>
+            <label className="form-label">Repetição</label>
             <select
-              value={form.installment_total}
-              onChange={e => setForm({ ...form, installment_total: e.target.value, recurrence: 'none' })}
+              value={form.recurrence}
+              onChange={e => setForm({ ...form, recurrence: e.target.value, installment_total: '1', repeat_count: '2' })}
             >
-              {installmentOptions.map(option => (
-                <option key={option} value={option}>
-                  {option === 1 ? 'À vista (sem parcelas)' : `${option}x parcelas`}
-                </option>
-              ))}
+              <option value="none">🔁 Não repetir</option>
+              <option value="weekly">🗓 Semanal</option>
+              <option value="monthly">📅 Mensal</option>
             </select>
 
-            {!isInstallment && (
-              <div className="two-columns" style={{ marginTop: '12px' }}>
-                <select value={form.recurrence} onChange={e => setForm({ ...form, recurrence: e.target.value })}>
-                  <option value="none">🔁 Não repetir</option>
-                  <option value="weekly">🗓 Semanal</option>
-                  <option value="monthly">📅 Mensal</option>
-                </select>
+            {(form.recurrence === 'monthly' || form.recurrence === 'weekly') && (
+              <div style={{ marginTop: '12px' }}>
+                <label className="form-label">Quantas vezes?</label>
+                <input
+                  type="number"
+                  min="2"
+                  max="999"
+                  value={form.repeat_count}
+                  onChange={e => setForm({ ...form, repeat_count: e.target.value })}
+                  placeholder="Ex: 12"
+                  style={{ width: '100%' }}
+                />
+              </div>
+            )}
 
-                {form.recurrence !== 'none' && (
-                  <select value={form.repeat_count} onChange={e => setForm({ ...form, repeat_count: e.target.value })}>
-                    <option value="4">4 vezes</option>
-                    <option value="6">6 vezes</option>
-                    <option value="12">12 vezes</option>
-                    <option value="24">24 vezes</option>
-                    <option value="36">36 vezes</option>
-                    <option value="48">48 vezes</option>
-                  </select>
-                )}
+            {form.recurrence === 'none' && (
+              <div style={{ marginTop: '12px' }}>
+                <label className="form-label">Parcelas (parcelado no cartão?)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="999"
+                  value={form.installment_total}
+                  onChange={e => setForm({ ...form, installment_total: e.target.value })}
+                  placeholder="1 = à vista"
+                  style={{ width: '100%' }}
+                />
               </div>
             )}
           </div>
