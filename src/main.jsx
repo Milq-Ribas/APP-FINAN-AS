@@ -832,42 +832,51 @@ function TransactionStatusModal({ transaction, onClose, onUpdateStatus, onEdit, 
 }
 
 function CircularProgress({ percentage, spent, total }) {
-  const radius = 60
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const radius = 45
   const circumference = 2 * Math.PI * radius
   const visualPercentage = Math.min(percentage, 100)
   const offset = circumference - (visualPercentage / 100) * circumference
 
+  let strokeColor = '#7dff86'
+  if (percentage > 80) strokeColor = '#ff5c5c'
+  else if (percentage > 60) strokeColor = '#ffc107'
+
   return (
     <article className="progress-card">
-      <div className="progress-container">
-        <svg className="progress-svg" viewBox="0 0 140 140">
-          <defs>
-            <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ff9a9e" />
-              <stop offset="100%" stopColor="#ff5c5c" />
-            </linearGradient>
-          </defs>
-          <circle
-            className="progress-bg"
-            cx="70" cy="70" r={radius}
-          />
-          <circle
-            className="progress-bar"
-            cx="70" cy="70" r={radius}
-            style={{
-              strokeDasharray: circumference,
-              '--offset': offset
-            }}
-          />
-        </svg>
-        <div className="progress-text">
-          <strong>{percentage}%</strong>
+      <div className="progress-header" onClick={() => setIsCollapsed(!isCollapsed)}>
+        <span>Renda mensal comprometida</span>
+        <ChevronDown size={20} className={`chevron ${isCollapsed ? 'rotate-180' : ''}`} />
+      </div>
+
+      {!isCollapsed && (
+        <div className="progress-body">
+          <div className="progress-container">
+            <svg className="progress-svg" viewBox="0 0 110 110">
+              <circle
+                className="progress-bg"
+                cx="55" cy="55" r={radius}
+              />
+              <circle
+                className="progress-bar"
+                cx="55" cy="55" r={radius}
+                style={{
+                  strokeDasharray: circumference,
+                  '--offset': offset,
+                  stroke: strokeColor
+                }}
+              />
+            </svg>
+            <div className="progress-text">
+              <strong>{percentage}%</strong>
+            </div>
+          </div>
+          <div className="progress-labels">
+            <span>{spent} / {total}</span>
+            <small>Total comprometido</small>
+          </div>
         </div>
-      </div>
-      <div className="progress-labels">
-        <span>{spent} / {total}</span>
-        <small>Renda mensal comprometida</small>
-      </div>
+      )}
     </article>
   )
 }
