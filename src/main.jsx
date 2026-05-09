@@ -381,6 +381,9 @@ function App() {
 
     const filteredTotal = filteredTransactions.reduce((sum, item) => sum + Number(item.amount), 0)
 
+    const totalIncome = receivedIncome + pendingIncome
+    const committedPercentage = totalIncome > 0 ? Math.round((allExpenses / totalIncome) * 100) : 0
+
     return {
       receivedIncome,
       allExpenses,
@@ -388,6 +391,8 @@ function App() {
       pendingExpenses,
       pendingIncome,
       filteredTotal,
+      totalIncome,
+      committedPercentage,
       accountBalance: receivedIncome - paidExpenses,
       expectedBalance: receivedIncome + pendingIncome - paidExpenses - pendingExpenses
     }
@@ -450,6 +455,12 @@ function App() {
               </div>
             </div>
           </section>
+
+          <CircularProgress 
+            percentage={summary.committedPercentage} 
+            spent={formatMoney(summary.allExpenses)} 
+            total={formatMoney(summary.totalIncome)} 
+          />
 
           <InfoCard label="A receber:" value={formatMoney(summary.pendingIncome)} />
           <InfoCard label="A pagar:" value={formatMoney(summary.pendingExpenses)} />
@@ -778,6 +789,47 @@ function TransactionStatusModal({ transaction, onClose, onUpdateStatus, onEdit, 
         </div>
       </section>
     </div>
+  )
+}
+
+function CircularProgress({ percentage, spent, total }) {
+  const radius = 60
+  const circumference = 2 * Math.PI * radius
+  const visualPercentage = Math.min(percentage, 100)
+  const offset = circumference - (visualPercentage / 100) * circumference
+
+  return (
+    <article className="progress-card">
+      <div className="progress-container">
+        <svg className="progress-svg" viewBox="0 0 140 140">
+          <defs>
+            <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ff9a9e" />
+              <stop offset="100%" stopColor="#ff5c5c" />
+            </linearGradient>
+          </defs>
+          <circle
+            className="progress-bg"
+            cx="70" cy="70" r={radius}
+          />
+          <circle
+            className="progress-bar"
+            cx="70" cy="70" r={radius}
+            style={{
+              strokeDasharray: circumference,
+              '--offset': offset
+            }}
+          />
+        </svg>
+        <div className="progress-text">
+          <strong>{percentage}%</strong>
+        </div>
+      </div>
+      <div className="progress-labels">
+        <span>{spent} / {total}</span>
+        <small>Renda mensal comprometida</small>
+      </div>
+    </article>
   )
 }
 
