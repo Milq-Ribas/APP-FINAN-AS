@@ -265,10 +265,6 @@ function App() {
           category: form.category,
           due_date: form.due_date,
           status: form.status,
-          recurrence: 'none',
-          installment_current: 1,
-          installment_total: Number(form.installment_total || 1),
-          person: 'Casal'
         })
         .eq('id', form.id)
 
@@ -674,55 +670,71 @@ function TransactionModal({ form, setForm, onSubmit, onClose, message }) {
           <button type="button" onClick={onClose} aria-label="Fechar"><X size={22} /></button>
         </div>
 
-        <input placeholder="Descrição" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} required />
-        <input placeholder="Valor" type="number" step="0.01" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} required />
-
-        <div className="two-columns">
-          <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
-            <option value="expense">Despesa</option>
-            <option value="income">Receita</option>
-          </select>
-
-          <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
-            <option value="pending">Pendente</option>
-            <option value="paid">Pago/recebido</option>
-          </select>
+        <div className="form-group">
+          <label className="form-label">Descrição</label>
+          <input placeholder="Ex: Aluguel, Salário..." value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} required />
         </div>
 
-        <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
-          <option>Moradia</option>
-          <option>Mercado</option>
-          <option>Transporte</option>
-          <option>Internet/Telefone</option>
-          <option>Energia/Água</option>
-          <option>Cartão</option>
-          <option>Lazer</option>
-          <option>Saúde</option>
-          <option>Salário</option>
-          <option>Outros</option>
-        </select>
+        <div className="form-group">
+          <label className="form-label">Valor (R$)</label>
+          <input placeholder="0,00" type="number" step="0.01" min="0.01" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} required />
+        </div>
 
-        <input type="date" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} />
+        <div className="form-group">
+          <label className="form-label">Tipo e status</label>
+          <div className="two-columns">
+            <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
+              <option value="expense">💸 Despesa</option>
+              <option value="income">💰 Receita</option>
+            </select>
+
+            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+              <option value="pending">⏳ Pendente</option>
+              <option value="paid">✅ Pago/recebido</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Categoria e vencimento</label>
+          <div className="two-columns">
+            <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
+              <option>Moradia</option>
+              <option>Mercado</option>
+              <option>Transporte</option>
+              <option>Internet/Telefone</option>
+              <option>Energia/Água</option>
+              <option>Cartão</option>
+              <option>Lazer</option>
+              <option>Saúde</option>
+              <option>Salário</option>
+              <option>Outros</option>
+            </select>
+
+            <input type="date" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} />
+          </div>
+        </div>
 
         {!isEditing && (
-          <>
+          <div className="form-group">
+            <label className="form-label">Parcelamento</label>
             <select
               value={form.installment_total}
               onChange={e => setForm({ ...form, installment_total: e.target.value, recurrence: 'none' })}
             >
               {installmentOptions.map(option => (
                 <option key={option} value={option}>
-                  {option === 1 ? 'Sem parcelamento' : `${option}x`}
+                  {option === 1 ? 'À vista (sem parcelas)' : `${option}x parcelas`}
                 </option>
               ))}
             </select>
 
             {!isInstallment && (
-              <div className="two-columns">
+              <div className="two-columns" style={{ marginTop: '12px' }}>
                 <select value={form.recurrence} onChange={e => setForm({ ...form, recurrence: e.target.value })}>
-                  <option value="none">Não repetir</option>
-                  <option value="weekly">Semanal</option>
-                  <option value="monthly">Mensal</option>
+                  <option value="none">🔁 Não repetir</option>
+                  <option value="weekly">🗓 Semanal</option>
+                  <option value="monthly">📅 Mensal</option>
                 </select>
 
                 {form.recurrence !== 'none' && (
@@ -737,7 +749,7 @@ function TransactionModal({ form, setForm, onSubmit, onClose, message }) {
                 )}
               </div>
             )}
-          </>
+          </div>
         )}
 
         <button className="submit-button" type="submit">

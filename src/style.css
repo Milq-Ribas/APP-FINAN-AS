@@ -747,6 +747,21 @@ select:focus {
   gap: 12px;
 }
 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  padding-left: 4px;
+}
+
 .submit-button,
 .auth-card button {
   min-height: 54px;
