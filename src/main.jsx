@@ -11,7 +11,8 @@ import {
   X,
   Pencil,
   Trash2,
-  Download
+  Download,
+  Bell
 } from 'lucide-react'
 import './style.css'
 
@@ -48,6 +49,12 @@ function formatMoney(value) {
 function addMonths(dateString, amount) {
   const [year, month, day] = dateString.split('-').map(Number)
   const date = new Date(year, month - 1 + amount, day)
+  return date.toISOString().slice(0, 10)
+}
+
+function addDays(dateString, amount) {
+  const [year, month, day] = dateString.split('-').map(Number)
+  const date = new Date(year, month - 1, day + amount)
   return date.toISOString().slice(0, 10)
 }
 
@@ -108,6 +115,8 @@ function App() {
   const [selectedTransaction, setSelectedTransaction] = useState(null)
   const [deferredPrompt, setDeferredPrompt] = useState(null)
   const [installMessage, setInstallMessage] = useState('')
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const [hasShownAlertPopup, setHasShownAlertPopup] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -138,6 +147,22 @@ function App() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
     }
   }, [])
+
+  const alerts = useMemo(() => {
+    const tomorrowStr = addDays(today, 1)
+    return transactions.filter(t => 
+      t.type === 'expense' && 
+      t.status === 'pending' && 
+      t.due_date <= tomorrowStr
+    ).sort((a, b) => a.due_date.localeCompare(b.due_date))
+  }, [transactions])
+
+  useEffect(() => {
+    if (alerts.length > 0 && !hasShownAlertPopup && view === 'home') {
+      setIsNotificationsOpen(true)
+      setHasShownAlertPopup(true)
+    }
+  }, [alerts, hasShownAlertPopup, view])
 
   async function fetchTransactions() {
     const { data, error } = await supabase
@@ -434,8 +459,14 @@ function App() {
       {view === 'home' && (
         <section className="page home-page">
           <header className="home-header">
-            <h1>FINANÇAS</h1>
-            <p>Seja bem-vindo</p>
+            <div>
+              <h1>FINANÇAS</h1>
+              <p>Seja bem-vindo</p>
+            </div>
+            <button className="notification-btn" onClick={() => setIsNotificationsOpen(true)}>
+              <Bell size={24} />
+              {alerts.length > 0 && <span className="badge">{alerts.length}</span>}
+            </button>
           </header>
 
           <section className="balance-card">
@@ -572,6 +603,14 @@ function App() {
           onUpdateStatus={updateTransactionStatus}
           onEdit={openEditModal}
           onDelete={deleteTransaction}
+        />
+      )}
+
+      {isNotificationsOpen && (
+        <NotificationsModal
+          alerts={alerts}
+          onClose={() => setIsNotificationsOpen(false)}
+          onOpenTransaction={openEditModal}
         />
       )}
     </main>
@@ -830,6 +869,53 @@ function CircularProgress({ percentage, spent, total }) {
         <small>Renda mensal comprometida</small>
       </div>
     </article>
+  )
+}
+
+function NotificationsModal({ alerts, onClose, onOpenTransaction }) {
+  return (
+    <div className="modal-backdrop">
+      <section className="modal-card">
+        <div className="modal-header">
+          <h2>Notificações</h2>
+          <button type="button" onClick={onClose} aria-label="Fechar"><X size={22} /></button>
+        </div>
+
+        {alerts.length === 0 ? (
+          <p className="empty-state">Tudo em dia! Nenhuma conta próxima do vencimento.</p>
+        ) : (
+          <div className="date-items">
+            {alerts.map(item => {
+              const isOverdue = item.due_date < today
+              const isTomorrow = item.due_date === addDays(today, 1)
+              const label = isOverdue ? 'Atrasado' : isTomorrow ? 'Vence amanhã' : 'Vence hoje'
+              const labelClass = isOverdue ? 'overdue' : 'expense-pending'
+
+              return (
+                <article
+                  className={`transaction-item ${labelClass}`}
+                  key={item.id}
+                  onClick={() => {
+                    onOpenTransaction(item)
+                    onClose()
+                  }}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="transaction-info">
+                    <strong>{item.description}</strong>
+                    <span>{label}</span>
+                  </div>
+                  <div className="transaction-value">
+                    <strong>{formatMoney(item.amount)}</strong>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        )}
+      </section>
+    </div>
   )
 }
 
