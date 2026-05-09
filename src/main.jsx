@@ -117,6 +117,7 @@ function App() {
   const [installMessage, setInstallMessage] = useState('')
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [hasShownAlertPopup, setHasShownAlertPopup] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -307,7 +308,7 @@ function App() {
         person: 'Casal',
         due_date: dueDate,
         status: form.status,
-        recurrence: isInstallment ? 'none' : form.recurrence,
+        recurrence: (isInstallment || form.recurrence === 'weekly') ? 'none' : form.recurrence,
         recurrence_group_id: repeatCount > 1 ? recurrenceGroupId : null,
         installment_current: isInstallment ? index + 1 : 1,
         installment_total: isInstallment ? Number(form.installment_total) : 1,
@@ -342,18 +343,50 @@ function App() {
     fetchTransactions()
   }
 
-  async function deleteTransaction(id) {
-    const confirmed = window.confirm('Deseja excluir esta transação?')
-    if (!confirmed) return
+  function deleteTransaction(transaction) {
+    setDeleteConfirm(transaction)
+  }
 
+  async function deleteOnlyThis(transaction) {
+    setDeleteConfirm(null)
     const { error } = await supabase
       .from('transactions')
       .delete()
-      .eq('id', id)
+      .eq('id', transaction.id)
 
     if (error) {
       setMessage(error.message)
       return
+    }
+
+    setSelectedTransaction(null)
+    fetchTransactions()
+  }
+
+  async function deleteThisAndFollowing(transaction) {
+    setDeleteConfirm(null)
+
+    if (transaction.recurrence_group_id) {
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('recurrence_group_id', transaction.recurrence_group_id)
+        .gte('due_date', transaction.due_date)
+
+      if (error) {
+        setMessage(error.message)
+        return
+      }
+    } else {
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', transaction.id)
+
+      if (error) {
+        setMessage(error.message)
+        return
+      }
     }
 
     setSelectedTransaction(null)
@@ -602,6 +635,15 @@ function App() {
         />
       )}
 
+      {deleteConfirm && (
+        <DeleteConfirmModal
+          transaction={deleteConfirm}
+          onClose={() => setDeleteConfirm(null)}
+          onDeleteOnly={deleteOnlyThis}
+          onDeleteFollowing={deleteThisAndFollowing}
+        />
+      )}
+
       {isNotificationsOpen && (
         <NotificationsModal
           alerts={alerts}
@@ -840,9 +882,61 @@ function TransactionStatusModal({ transaction, onClose, onUpdateStatus, onEdit, 
             Editar
           </button>
 
-          <button type="button" className="delete-secondary" onClick={() => onDelete(transaction.id)}>
+          <button type="button" className="delete-secondary" onClick={() => onDelete(transaction)}>
             <Trash2 size={17} />
             Excluir
+          </button>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+function DeleteConfirmModal({ transaction, onClose, onDeleteOnly, onDeleteFollowing }) {
+  const hasGroup = Boolean(transaction.recurrence_group_id)
+
+  return (
+    <div className="modal-backdrop">
+      <section className="modal-card delete-confirm-card">
+        <div className="modal-header">
+          <h2>Excluir lançamento</h2>
+          <button type="button" onClick={onClose} aria-label="Fechar"><X size={22} /></button>
+        </div>
+
+        <div className="delete-confirm-body">
+          <Trash2 size={36} className="delete-icon" />
+          <p className="delete-confirm-desc">
+            <strong>{transaction.description}</strong>
+          </p>
+          <p className="delete-confirm-sub">
+            {hasGroup
+              ? 'Esta é uma transação recorrente. Como deseja excluir?'
+              : 'Deseja excluir esta transação?'
+            }
+          </p>
+        </div>
+
+        <div className="delete-confirm-actions">
+          <button
+            type="button"
+            className="delete-only-btn"
+            onClick={() => onDeleteOnly(transaction)}
+          >
+            Apagar somente essa
+          </button>
+
+          {hasGroup && (
+            <button
+              type="button"
+              className="delete-following-btn"
+              onClick={() => onDeleteFollowing(transaction)}
+            >
+              Atual e seguintes
+            </button>
+          )}
+
+          <button type="button" className="cancel-delete-btn" onClick={onClose}>
+            Cancelar
           </button>
         </div>
       </section>

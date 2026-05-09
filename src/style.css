@@ -1165,3 +1165,96 @@ select:focus {
   .bottom-nav { padding: 0 16px; }
   .bottom-nav .add-button { width: 56px; height: 56px; margin-top: -28px; border-radius: 16px; }
 }
+
+/* ── Delete Confirm Modal ─────────────────────────────── */
+
+.delete-confirm-card {
+  gap: 20px;
+}
+
+.delete-confirm-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 24px 16px;
+  border-radius: 20px;
+  background: rgba(255, 75, 75, 0.05);
+  border: 1px solid rgba(255, 75, 75, 0.12);
+}
+
+.delete-icon {
+  color: var(--danger-color);
+  opacity: 0.85;
+}
+
+.delete-confirm-desc {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.delete-confirm-sub {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.delete-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.delete-only-btn {
+  min-height: 52px;
+  border-radius: 16px;
+  background: rgba(255, 75, 75, 0.12);
+  color: var(--danger-color);
+  font-size: 15px;
+  font-weight: 700;
+  border: 1px solid rgba(255, 75, 75, 0.25);
+  transition: all 0.2s ease;
+}
+
+.delete-only-btn:hover {
+  background: rgba(255, 75, 75, 0.22);
+  transform: translateY(-1px);
+}
+
+.delete-following-btn {
+  min-height: 52px;
+  border-radius: 16px;
+  background: var(--danger-color);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 4px 16px rgba(255, 75, 75, 0.3);
+  transition: all 0.2s ease;
+}
+
+.delete-following-btn:hover {
+  background: #ff3a3a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 75, 75, 0.4);
+}
+
+.cancel-delete-btn {
+  min-height: 48px;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
+}
+
+.cancel-delete-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
