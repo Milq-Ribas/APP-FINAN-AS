@@ -8,9 +8,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Finanças',
-        short_name: 'Finanças',
-        description: 'App simples para organizar as contas da casa.',
+        name: 'FINANCE',
+        short_name: 'FINANCE',
+        description: 'Organize suas finanças pessoais de forma simples e segura.',
         theme_color: '#101010',
         background_color: '#101010',
         display: 'standalone',

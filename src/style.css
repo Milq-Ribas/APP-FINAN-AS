@@ -1,16 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
+/* DM Sans loaded via index.html <link> for faster rendering */
 
 * {
   box-sizing: border-box;
 }
 
 :root {
-  font-family: 'Sora', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   --bg-color: #0c0c0c;
   --surface-color: #141414;
   --surface-color-light: #1c1c1c;
-  --primary-color: #7dff86;
-  --primary-dark: #2c7240;
+  --primary-color: #17b5a2;
+  --primary-dark: #0d4a43;
   --danger-color: #ff5c5c;
   --warning-color: #fff178;
   --text-main: #f4f4f4;
@@ -59,18 +59,18 @@ select {
 input:focus,
 select:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.15);
+  box-shadow: 0 0 0 4px rgba(13, 74, 67, 0.3);
   background: rgba(0, 0, 0, 0.4);
 }
 
 .dark-bg {
-  background: radial-gradient(circle at 50% 0%, rgba(125, 255, 134, 0.08), transparent 50%),
+  background: radial-gradient(circle at 50% 0%, rgba(13, 74, 67, 0.2), transparent 50%),
               linear-gradient(180deg, #0c0c0c 0%, #121212 100%);
   background-attachment: fixed;
 }
 
 .app-mobile {
-  width: min(100%, 430px);
+  width: 100%;
   min-height: 100vh;
   margin: 0 auto;
   position: relative;
@@ -132,7 +132,14 @@ select:focus {
   color: var(--primary-color);
   font-weight: 800;
   letter-spacing: -0.04em;
-  text-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+  text-shadow: 0 0 20px rgba(13, 74, 67, 0.4);
+}
+
+.header-logo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .home-header p {
@@ -369,8 +376,8 @@ select:focus {
 .filter-total {
   padding: 12px 16px;
   border-radius: 16px;
-  background: rgba(0, 255, 136, 0.05);
-  border: 1px solid rgba(0, 255, 136, 0.1);
+  background: rgba(13, 74, 67, 0.15);
+  border: 1px solid rgba(13, 74, 67, 0.3);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -460,12 +467,12 @@ select:focus {
 
 .transaction-item.income-paid {
   border-left: 4px solid var(--primary-color);
-  background: rgba(125, 255, 134, 0.06);
+  background: rgba(13, 74, 67, 0.15);
 }
 
 .transaction-item.expense-paid {
-  border-left: 4px solid var(--text-muted);
-  background: rgba(255, 255, 255, 0.03);
+  border-left: 4px solid rgba(255, 92, 92, 0.4);
+  background: rgba(255, 75, 75, 0.06);
 }
 
 .transaction-item.overdue {
@@ -524,7 +531,7 @@ select:focus {
 }
 
 .transaction-item.expense-paid .transaction-value strong {
-  color: var(--text-muted);
+  color: rgba(255, 120, 120, 0.6);
 }
 
 .transaction-value span {
@@ -543,7 +550,7 @@ select:focus {
   color: var(--danger-color);
 }
 .transaction-item.income-pending .transaction-value span {
-  background: rgba(0, 255, 136, 0.15);
+  background: rgba(13, 74, 67, 0.25);
   color: var(--primary-color);
 }
 .transaction-item.income-paid .transaction-value span {
@@ -553,9 +560,9 @@ select:focus {
 }
 
 .transaction-item.expense-paid .transaction-value span {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-muted);
+  background: rgba(255, 75, 75, 0.1);
+  border: 1px solid rgba(255, 75, 75, 0.15);
+  color: rgba(255, 120, 120, 0.7);
 }
 .transaction-item.overdue .transaction-value span {
   background: rgba(255, 193, 7, 0.15);
@@ -609,7 +616,7 @@ select:focus {
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  width: min(100%, 430px);
+  width: 100%;
   height: 72px;
   padding: 0 24px;
   border-radius: 24px 24px 0 0;
@@ -641,7 +648,7 @@ select:focus {
 
 .bottom-nav button.active {
   color: var(--primary-color);
-  background: rgba(0, 255, 136, 0.1);
+  background: rgba(13, 74, 67, 0.2);
 }
 
 .bottom-nav .add-button {
@@ -651,7 +658,7 @@ select:focus {
   border-radius: 20px;
   background: var(--primary-color);
   color: #000;
-  box-shadow: 0 8px 24px rgba(0, 255, 136, 0.3);
+  box-shadow: none;
   transform: rotate(45deg);
 }
 
@@ -660,9 +667,10 @@ select:focus {
 }
 
 .bottom-nav .add-button:hover {
-  background: #00e67a;
+  background: #0d4a43;
   transform: rotate(45deg) scale(1.05);
   color: #000;
+  box-shadow: none;
 }
 
 .modal-backdrop {
@@ -771,14 +779,14 @@ select:focus {
   font-size: 16px;
   font-weight: 700;
   margin-top: 8px;
-  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2);
+  box-shadow: 0 4px 12px rgba(13, 74, 67, 0.3);
 }
 
 .submit-button:hover,
 .auth-card button:hover:not(.ghost-button) {
-  background: #00e67a;
+  background: #0b3e38;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 255, 136, 0.3);
+  box-shadow: 0 6px 16px rgba(13, 74, 67, 0.4);
 }
 
 .submit-button:active,
@@ -850,8 +858,8 @@ select:focus {
   margin: 0;
   padding: 12px 16px;
   border-radius: 12px;
-  background: rgba(0, 255, 136, 0.1);
-  border: 1px solid rgba(0, 255, 136, 0.2);
+  background: rgba(13, 74, 67, 0.2);
+  border: 1px solid rgba(13, 74, 67, 0.35);
   color: var(--primary-color);
   font-size: 13px;
   line-height: 1.5;
@@ -919,13 +927,13 @@ select:focus {
 }
 
 .status-action-button.positive {
-  background: rgba(0, 255, 136, 0.1);
+  background: rgba(13, 74, 67, 0.2);
   color: var(--primary-color);
-  border-color: rgba(0, 255, 136, 0.2);
+  border-color: rgba(13, 74, 67, 0.35);
 }
 
 .status-action-button.positive:hover {
-  background: rgba(0, 255, 136, 0.2);
+  background: rgba(13, 74, 67, 0.3);
 }
 
 .status-action-button.negative {
@@ -1009,7 +1017,7 @@ select:focus {
   font-weight: 800;
   letter-spacing: -0.04em;
   text-align: center;
-  text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+  text-shadow: 0 0 20px rgba(13, 74, 67, 0.5);
 }
 
 .auth-card p {
@@ -1017,6 +1025,47 @@ select:focus {
   color: var(--text-muted);
   font-size: 16px;
   text-align: center;
+}
+
+.auth-logo {
+  display: block;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin: 0 auto 12px;
+  border-radius: 24px;
+}
+
+.expected-profit-row {
+  margin-top: 16px;
+  padding: 14px 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.expected-profit-row span {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profit-positive {
+  font-size: 17px;
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.profit-negative {
+  font-size: 17px;
+  color: var(--danger-color);
+  font-weight: 700;
 }
 
 .progress-card {
@@ -1164,6 +1213,165 @@ select:focus {
   .filters-row .month-selector.compact { grid-column: span 2; width: 100%; }
   .bottom-nav { padding: 0 16px; }
   .bottom-nav .add-button { width: 56px; height: 56px; margin-top: -28px; border-radius: 16px; }
+}
+/* ── Mobile constraint (under tablet) ────────────────── */
+
+@media (max-width: 767px) {
+  .app-mobile {
+    max-width: 430px;
+  }
+  .bottom-nav {
+    max-width: 430px;
+  }
+}
+
+/* ── Web / Desktop responsiveness ─────────────────────── */
+
+@media (min-width: 768px) {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+
+  .app-mobile {
+    max-width: 520px;
+    border-left: 1px solid rgba(255, 255, 255, 0.04);
+    border-right: 1px solid rgba(255, 255, 255, 0.04);
+    min-height: 100vh;
+  }
+
+  .auth-screen {
+    width: 100vw;
+    max-width: 100%;
+  }
+
+  .modal-backdrop {
+    place-items: center;
+  }
+
+  .modal-card {
+    animation-name: fadeScaleIn;
+  }
+
+  @keyframes fadeScaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .transaction-item:hover {
+    transform: translateY(-2px) scale(1.015);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+  }
+
+  .bottom-nav {
+    max-width: 520px;
+    border-radius: 24px 24px 0 0;
+  }
+
+  .page {
+    padding: 32px 28px 14px;
+  }
+
+  .home-page {
+    padding-top: 40px;
+  }
+
+  .main-balance {
+    font-size: 52px;
+  }
+
+  .header-logo {
+    height: 42px;
+  }
+
+  .info-card strong {
+    font-size: 26px;
+  }
+
+  .progress-container {
+    width: 130px;
+    height: 130px;
+  }
+
+  .progress-text strong {
+    font-size: 30px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-mobile {
+    max-width: 640px;
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.6);
+  }
+
+  .bottom-nav {
+    max-width: 640px;
+  }
+
+  .balance-card:hover,
+  .progress-card:hover,
+  .info-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    transition: border-color 0.3s ease;
+  }
+
+  .page {
+    padding: 36px 36px 14px;
+  }
+
+  .pill {
+    font-size: 20px;
+  }
+
+  .modal-card {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .app-mobile {
+    max-width: 720px;
+  }
+
+  .bottom-nav {
+    max-width: 720px;
+  }
+
+  .main-balance {
+    font-size: 56px;
+  }
+
+  .transactions-panel {
+    height: calc(100vh - 140px);
+  }
+}
+
+/* ── Forecast / Expected Profit row ───────────────────── */
+
+.forecast-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+  flex-shrink: 0;
+}
+
+.forecast-row .forecast-box {
+  margin-top: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 14px;
+}
+
+.forecast-row .forecast-box span {
+  font-size: 11px;
+}
+
+.forecast-row .forecast-box strong {
+  font-size: 16px;
 }
 
 /* ── Delete Confirm Modal ─────────────────────────────── */

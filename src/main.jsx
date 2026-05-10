@@ -468,8 +468,8 @@ function App() {
     return (
       <main className="auth-screen dark-bg">
         <section className="auth-card">
-          <h1>FINANÇAS</h1>
-          <p>Organize as contas da casa.</p>
+          <img src="/logo.png" alt="FINANCE" className="auth-logo" />
+          <p>Organize suas finanças pessoais.</p>
 
           <input placeholder="E-mail" value={email} onChange={e => setEmail(e.target.value)} />
           <input placeholder="Senha" type="password" value={password} onChange={e => setPassword(e.target.value)} />
@@ -488,8 +488,8 @@ function App() {
       {view === 'home' && (
         <section className="page home-page">
           <header className="home-header">
-            <div>
-              <h1>FINANÇAS</h1>
+            <div className="home-header-text">
+              <img src="/logo.png" alt="FINANCE" className="header-logo" />
               <p>Seja bem-vindo</p>
             </div>
             <button className="notification-btn" onClick={() => setIsNotificationsOpen(true)}>
@@ -519,7 +519,9 @@ function App() {
           <CircularProgress 
             percentage={summary.committedPercentage} 
             spent={formatMoney(summary.allExpenses)} 
-            total={formatMoney(summary.totalIncome)} 
+            total={formatMoney(summary.totalIncome)}
+            expectedProfit={formatMoney(summary.expectedBalance)}
+            expectedProfitRaw={summary.expectedBalance}
           />
 
           <InfoCard label="A receber:" value={formatMoney(summary.pendingIncome)} />
@@ -589,10 +591,18 @@ function App() {
               ))}
             </div>
 
-            <footer className="forecast-box">
-              <span>SALDO PREVISTO</span>
-              <strong className={expectedBalanceClass}>{expectedBalanceText}</strong>
-            </footer>
+            <div className="forecast-row">
+              <footer className="forecast-box">
+                <span>SALDO PREVISTO</span>
+                <strong className={expectedBalanceClass}>{expectedBalanceText}</strong>
+              </footer>
+              <footer className="forecast-box">
+                <span>LUCRO PREVISTO</span>
+                <strong className={summary.expectedBalance < 0 ? 'forecast-negative' : 'forecast-positive'}>
+                  {summary.expectedBalance < 0 ? `-${formatMoney(Math.abs(summary.expectedBalance))}` : formatMoney(summary.expectedBalance)}
+                </strong>
+              </footer>
+            </div>
           </section>
         </section>
       )}
@@ -944,14 +954,14 @@ function DeleteConfirmModal({ transaction, onClose, onDeleteOnly, onDeleteFollow
   )
 }
 
-function CircularProgress({ percentage, spent, total }) {
+function CircularProgress({ percentage, spent, total, expectedProfit, expectedProfitRaw }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const radius = 45
   const circumference = 2 * Math.PI * radius
   const visualPercentage = Math.min(percentage, 100)
   const offset = circumference - (visualPercentage / 100) * circumference
 
-  let strokeColor = '#7dff86'
+  let strokeColor = '#17b5a2'
   if (percentage > 80) strokeColor = '#ff5c5c'
   else if (percentage > 60) strokeColor = '#ffc107'
 
@@ -987,6 +997,12 @@ function CircularProgress({ percentage, spent, total }) {
           <div className="progress-labels">
             <span>{spent} / {total}</span>
             <small>Total comprometido</small>
+          </div>
+          <div className="expected-profit-row">
+            <span>Lucro previsto:</span>
+            <strong className={expectedProfitRaw < 0 ? 'profit-negative' : 'profit-positive'}>
+              {expectedProfit}
+            </strong>
           </div>
         </div>
       )}
