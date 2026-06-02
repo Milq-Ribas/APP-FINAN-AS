@@ -393,6 +393,25 @@ function App() {
     fetchTransactions()
   }
 
+  async function deleteAllTransactions() {
+    const confirm = window.confirm('Tem certeza que deseja apagar TODOS os seus lançamentos? Esta ação não pode ser desfeita.')
+    if (!confirm) return
+
+    const { error } = await supabase
+      .from('transactions')
+      .delete()
+      .eq('user_id', session.user.id)
+
+    if (error) {
+      setMessage(error.message)
+      return
+    }
+
+    fetchTransactions()
+    setIsProfileOpen(false)
+    alert('Todos os dados foram apagados com sucesso.')
+  }
+
   const monthTransactions = useMemo(() => {
     return transactions.filter(item => item.due_date?.startsWith(monthFilter))
   }, [transactions, monthFilter])
@@ -632,6 +651,7 @@ function App() {
           signOut={signOut}
           installApp={installApp}
           installMessage={installMessage}
+          deleteAllTransactions={deleteAllTransactions}
         />
       )}
 
@@ -821,7 +841,7 @@ function TransactionModal({ form, setForm, onSubmit, onClose, message }) {
   )
 }
 
-function ProfileModal({ email, onClose, signOut, installApp, installMessage }) {
+function ProfileModal({ email, onClose, signOut, installApp, installMessage, deleteAllTransactions }) {
   return (
     <div className="modal-backdrop">
       <section className="modal-card profile-card">
@@ -841,6 +861,14 @@ function ProfileModal({ email, onClose, signOut, installApp, installMessage }) {
         {installMessage && <p className="install-message">{installMessage}</p>}
 
         <button className="submit-button" onClick={signOut}>Sair da conta</button>
+
+        <div style={{ marginTop: '16px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <p className="profile-label" style={{ textAlign: 'center', color: 'var(--danger-color)' }}>Zona de Perigo</p>
+          <button className="delete-following-btn" onClick={deleteAllTransactions} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <Trash2 size={18} />
+            Zerar todos os dados
+          </button>
+        </div>
       </section>
     </div>
   )
