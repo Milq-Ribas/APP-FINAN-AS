@@ -1301,13 +1301,72 @@ select:focus {
 }
 
 @media (min-width: 1024px) {
+  body {
+    display: block;
+    background: var(--bg-color);
+  }
+
   .app-mobile {
-    max-width: 640px;
-    box-shadow: 0 0 80px rgba(0, 0, 0, 0.6);
+    max-width: 1100px;
+    width: 100%;
+    margin-left: 260px;
+    margin-right: auto;
+    border: none;
+    box-shadow: none;
+    padding-bottom: 40px;
   }
 
   .bottom-nav {
-    max-width: 640px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 40px 0;
+    border-radius: 0;
+    border-right: 1px solid var(--glass-border);
+    border-top: none;
+    align-items: stretch;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    z-index: 900;
+  }
+
+  .bottom-nav > button {
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 16px 32px;
+    gap: 16px;
+    height: auto;
+    border-radius: 0;
+    flex: none;
+  }
+
+  .bottom-nav span {
+    display: inline;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .bottom-nav .add-button {
+    position: static;
+    margin: 32px 32px;
+    width: calc(100% - 64px);
+    border-radius: 16px;
+    height: 54px;
+    transform: none;
+    flex-direction: row;
+    justify-content: center;
+    order: -1;
+    box-shadow: 0 4px 12px rgba(23, 181, 162, 0.3);
+  }
+
+  .bottom-nav .add-button:hover {
+    transform: translateY(-2px);
   }
 
   .balance-card:hover,
@@ -1318,7 +1377,7 @@ select:focus {
   }
 
   .page {
-    padding: 36px 36px 14px;
+    padding: 40px 40px 20px;
   }
 
   .pill {
@@ -1328,23 +1387,48 @@ select:focus {
   .modal-card {
     max-width: 500px;
   }
+
+  .home-page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  .home-header {
+    grid-column: 1 / -1;
+  }
+
+  .balance-card {
+    grid-column: 1 / -1;
+  }
+
+  .chart-container {
+    margin-top: 0;
+    height: 100%;
+  }
+
+  .transactions-panel {
+    height: calc(100vh - 120px);
+  }
+
+  .filters-row {
+    grid-template-columns: 1fr auto auto;
+  }
 }
 
 @media (min-width: 1280px) {
   .app-mobile {
-    max-width: 720px;
+    max-width: 1200px;
+    margin-left: 280px;
   }
 
   .bottom-nav {
-    max-width: 720px;
+    width: 280px;
   }
 
   .main-balance {
-    font-size: 56px;
-  }
-
-  .transactions-panel {
-    height: calc(100vh - 140px);
+    font-size: 64px;
   }
 }
 

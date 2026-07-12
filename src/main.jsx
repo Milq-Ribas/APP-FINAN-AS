@@ -783,22 +783,27 @@ function BottomNav({ activeView, setView, openAdd, openProfile, signOut }) {
     <nav className="bottom-nav">
       <button className={activeView === 'home' ? 'active' : ''} onClick={() => setView('home')} aria-label="Resumo">
         <BarChart3 size={28} strokeWidth={2.8} />
+        <span>Resumo</span>
       </button>
 
       <button className={activeView === 'transactions' ? 'active' : ''} onClick={() => setView('transactions')} aria-label="Transações">
         <ReceiptText size={28} strokeWidth={2.8} />
+        <span>Transações</span>
       </button>
 
       <button className="add-button" onClick={openAdd} aria-label="Adicionar lançamento">
         <Plus size={44} strokeWidth={3.2} />
+        <span>Novo Lançamento</span>
       </button>
 
       <button onClick={openProfile} aria-label="Perfil">
         <UserCircle size={29} strokeWidth={2.8} />
+        <span>Perfil</span>
       </button>
 
       <button onClick={signOut} aria-label="Sair">
         <LogOut size={29} strokeWidth={2.8} />
+        <span>Sair</span>
       </button>
     </nav>
   )
