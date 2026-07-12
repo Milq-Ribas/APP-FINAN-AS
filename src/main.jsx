@@ -12,12 +12,34 @@ import {
   Pencil,
   Trash2,
   Download,
-  Bell
+  Bell,
+  Eye,
+  EyeOff,
+  Search
 } from 'lucide-react'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import './style.css'
 
 const today = new Date().toISOString().slice(0, 10)
 const currentMonth = new Date().toISOString().slice(0, 7)
+
+const categoryOptions = [
+  { name: 'Moradia', icon: '🏠' },
+  { name: 'Mercado', icon: '🛒' },
+  { name: 'Transporte', icon: '🚌' },
+  { name: 'Internet/Telefone', icon: '📱' },
+  { name: 'Energia/Água', icon: '💡' },
+  { name: 'Cartão', icon: '💳' },
+  { name: 'Lazer', icon: '🎉' },
+  { name: 'Saúde', icon: '⚕️' },
+  { name: 'Salário', icon: '💵' },
+  { name: 'Outros', icon: '📦' }
+]
+
+function getCategoryIcon(name) {
+  const cat = categoryOptions.find(c => c.name === name)
+  return cat ? cat.icon : ''
+}
 
 const initialForm = {
   id: null,
@@ -103,6 +125,8 @@ function App() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(true)
+  const [showPassword, setShowPassword] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [transactions, setTransactions] = useState([])
   const [form, setForm] = useState(initialForm)
   const [monthFilter, setMonthFilter] = useState(currentMonth)
@@ -179,12 +203,6 @@ function App() {
     setTransactions(data || [])
   }
 
-  async function signUp() {
-    setMessage('')
-    const { error } = await supabase.auth.signUp({ email, password })
-    if (error) setMessage(error.message)
-    else setMessage('Cadastro criado. Agora faça login.')
-  }
 
   async function signIn() {
     setMessage('')
@@ -420,7 +438,34 @@ function App() {
     return monthTransactions
       .filter(item => statusFilter === 'all' || item.status === statusFilter)
       .filter(item => typeFilter === 'all' || item.type === typeFilter)
-  }, [monthTransactions, statusFilter, typeFilter])
+      .filter(item => item.description.toLowerCase().includes(searchQuery.toLowerCase()))
+  }, [monthTransactions, statusFilter, typeFilter, searchQuery])
+
+  const exportToCSV = () => {
+    const header = ['ID,Data,Descricao,Valor,Tipo,Categoria,Status\n'];
+    const rows = transactions.map(t => 
+      `${t.id},${t.due_date},"${t.description}",${t.amount},${t.type},${t.category},${t.status}`
+    );
+    const csvContent = "data:text/csv;charset=utf-8," + header.concat(rows).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "financas.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  const expensesByCategory = useMemo(() => {
+    const expenses = monthTransactions.filter(t => t.type === 'expense');
+    const groups = expenses.reduce((acc, t) => {
+      acc[t.category] = (acc[t.category] || 0) + Number(t.amount);
+      return acc;
+    }, {});
+    return Object.entries(groups).map(([name, value]) => ({ name, value }));
+  }, [monthTransactions])
+
+  const CHART_COLORS = ['#17b5a2', '#ff5c5c', '#fff178', '#3498db', '#9b59b6', '#e67e22', '#1abc9c', '#34495e', '#f39c12', '#7f8c8d'];
 
   const groupedTransactions = useMemo(() => {
     return filteredTransactions.reduce((groups, item) => {
@@ -491,10 +536,15 @@ function App() {
           <p>Organize suas finanças pessoais.</p>
 
           <input placeholder="E-mail" value={email} onChange={e => setEmail(e.target.value)} />
-          <input placeholder="Senha" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+          
+          <div className="password-input-wrapper">
+            <input placeholder="Senha" type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} />
+            <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)} aria-label="Mostrar senha">
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
 
           <button onClick={signIn}>Entrar</button>
-          <button className="ghost-button" onClick={signUp}>Criar conta</button>
 
           {message && <p className="message">{message}</p>}
         </section>
@@ -543,6 +593,22 @@ function App() {
             expectedProfitRaw={summary.expectedBalance}
           />
 
+          {expensesByCategory.length > 0 && (
+            <div className="chart-container">
+              <h3 className="chart-title">Despesas por Categoria</h3>
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie data={expensesByCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5}>
+                    {expensesByCategory.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => formatMoney(value)} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+
           <InfoCard label="A receber:" value={formatMoney(summary.pendingIncome)} />
           <InfoCard label="A pagar:" value={formatMoney(summary.pendingExpenses)} />
         </section>
@@ -553,6 +619,13 @@ function App() {
           <h2>Transações</h2>
 
           <section className="transactions-panel">
+            <div className="search-row">
+              <div className="search-input-wrapper">
+                <Search size={18} className="search-icon" />
+                <input placeholder="Buscar lançamentos..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+              </div>
+            </div>
+
             <div className="filters-row">
               <MonthSelector value={monthFilter} onChange={setMonthFilter} compact />
 
@@ -595,7 +668,7 @@ function App() {
                         >
                           <div className="transaction-info">
                             <strong>{item.description}</strong>
-                            <span>{getInstallmentsLabel(item)}</span>
+                            <span>{getCategoryIcon(item.category)} {getInstallmentsLabel(item)}</span>
                           </div>
 
                           <div className="transaction-value">
@@ -652,6 +725,7 @@ function App() {
           installApp={installApp}
           installMessage={installMessage}
           deleteAllTransactions={deleteAllTransactions}
+          exportToCSV={exportToCSV}
         />
       )}
 
@@ -771,16 +845,9 @@ function TransactionModal({ form, setForm, onSubmit, onClose, message }) {
           <label className="form-label">Categoria e vencimento</label>
           <div className="two-columns">
             <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
-              <option>Moradia</option>
-              <option>Mercado</option>
-              <option>Transporte</option>
-              <option>Internet/Telefone</option>
-              <option>Energia/Água</option>
-              <option>Cartão</option>
-              <option>Lazer</option>
-              <option>Saúde</option>
-              <option>Salário</option>
-              <option>Outros</option>
+              {categoryOptions.map(cat => (
+                <option key={cat.name} value={cat.name}>{cat.icon} {cat.name}</option>
+              ))}
             </select>
 
             <input type="date" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} />
@@ -841,7 +908,7 @@ function TransactionModal({ form, setForm, onSubmit, onClose, message }) {
   )
 }
 
-function ProfileModal({ email, onClose, signOut, installApp, installMessage, deleteAllTransactions }) {
+function ProfileModal({ email, onClose, signOut, installApp, installMessage, deleteAllTransactions, exportToCSV }) {
   return (
     <div className="modal-backdrop">
       <section className="modal-card profile-card">
@@ -853,7 +920,12 @@ function ProfileModal({ email, onClose, signOut, installApp, installMessage, del
         <p className="profile-label">Logado como</p>
         <strong className="profile-email">{email}</strong>
 
-        <button className="install-button" onClick={installApp}>
+        <button className="install-button" onClick={exportToCSV} style={{ marginTop: '12px' }}>
+          <Download size={18} />
+          Exportar Excel (CSV)
+        </button>
+
+        <button className="install-button" onClick={installApp} style={{ marginTop: '12px' }}>
           <Download size={18} />
           Instalar app
         </button>
