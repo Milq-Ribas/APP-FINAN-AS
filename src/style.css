@@ -771,7 +771,7 @@ select:focus {
 }
 
 .submit-button,
-.auth-card button {
+.auth-card > button {
   min-height: 54px;
   border-radius: 16px;
   background: var(--primary-color);
@@ -783,14 +783,14 @@ select:focus {
 }
 
 .submit-button:hover,
-.auth-card button:hover:not(.ghost-button) {
+.auth-card > button:hover:not(.ghost-button) {
   background: #0b3e38;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(13, 74, 67, 0.4);
 }
 
 .submit-button:active,
-.auth-card button:active:not(.ghost-button) {
+.auth-card > button:active:not(.ghost-button) {
   transform: translateY(0);
 }
 
