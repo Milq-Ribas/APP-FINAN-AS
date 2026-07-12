@@ -593,21 +593,7 @@ function App() {
             expectedProfitRaw={summary.expectedBalance}
           />
 
-          {expensesByCategory.length > 0 && (
-            <div className="chart-container">
-              <h3 className="chart-title">Despesas por Categoria</h3>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie data={expensesByCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5}>
-                    {expensesByCategory.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => formatMoney(value)} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          )}
+          <ExpenseChartCard expensesByCategory={expensesByCategory} CHART_COLORS={CHART_COLORS} />
 
           <InfoCard label="A receber:" value={formatMoney(summary.pendingIncome)} />
           <InfoCard label="A pagar:" value={formatMoney(summary.pendingExpenses)} />
@@ -684,12 +670,8 @@ function App() {
             </div>
 
             <div className="forecast-row">
-              <footer className="forecast-box">
-                <span>SALDO PREVISTO</span>
-                <strong className={expectedBalanceClass}>{expectedBalanceText}</strong>
-              </footer>
-              <footer className="forecast-box">
-                <span>LUCRO PREVISTO</span>
+              <footer className="forecast-box" style={{ width: '100%' }}>
+                <span>LUCRO MENSAL PREVISTO</span>
                 <strong className={summary.expectedBalance < 0 ? 'forecast-negative' : 'forecast-positive'}>
                   {summary.expectedBalance < 0 ? `-${formatMoney(Math.abs(summary.expectedBalance))}` : formatMoney(summary.expectedBalance)}
                 </strong>
@@ -1112,6 +1094,36 @@ function CircularProgress({ percentage, spent, total, expectedProfit, expectedPr
         </div>
       )}
     </article>
+  )
+}
+
+function ExpenseChartCard({ expensesByCategory, CHART_COLORS }) {
+  const [isCollapsed, setIsCollapsed] = useState(true)
+
+  if (expensesByCategory.length === 0) return null;
+
+  return (
+    <div className="chart-container progress-card" style={{ padding: '0', background: 'var(--glass-bg)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+      <div className="progress-header" onClick={() => setIsCollapsed(!isCollapsed)} style={{ padding: '20px', borderBottom: isCollapsed ? 'none' : '1px solid rgba(255, 255, 255, 0.05)' }}>
+        <span>Despesas por Categoria</span>
+        <ChevronDown size={20} className={`chevron ${isCollapsed ? 'rotate-180' : ''}`} />
+      </div>
+      
+      {!isCollapsed && (
+        <div style={{ padding: '0 20px 20px 20px' }}>
+          <ResponsiveContainer width="100%" height={200} style={{ marginTop: '16px' }}>
+            <PieChart>
+              <Pie data={expensesByCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5}>
+                {expensesByCategory.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => formatMoney(value)} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+    </div>
   )
 }
 
