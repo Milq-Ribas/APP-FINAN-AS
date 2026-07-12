@@ -442,9 +442,9 @@ select:focus {
   border-radius: 16px;
   background: var(--surface-color-light);
   border: 1px solid transparent;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, box-shadow;
+  color: var(--text-main);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .transaction-item:hover {
@@ -1302,71 +1302,23 @@ select:focus {
 
 @media (min-width: 1024px) {
   body {
-    display: block;
+    display: flex;
+    justify-content: center;
     background: var(--bg-color);
   }
 
   .app-mobile {
-    max-width: 1100px;
+    max-width: 900px;
     width: 100%;
-    margin-left: 260px;
-    margin-right: auto;
-    border: none;
-    box-shadow: none;
-    padding-bottom: 40px;
+    margin: 0 auto;
+    border-left: 1px solid var(--glass-border);
+    border-right: 1px solid var(--glass-border);
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.6);
+    padding-bottom: 100px;
   }
 
   .bottom-nav {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 260px;
-    height: 100vh;
-    flex-direction: column;
-    justify-content: flex-start;
-    padding: 40px 0;
-    border-radius: 0;
-    border-right: 1px solid var(--glass-border);
-    border-top: none;
-    align-items: stretch;
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    z-index: 900;
-  }
-
-  .bottom-nav > button {
-    width: 100%;
-    flex-direction: row;
-    justify-content: flex-start;
-    padding: 16px 32px;
-    gap: 16px;
-    height: auto;
-    border-radius: 0;
-    flex: none;
-  }
-
-  .bottom-nav span {
-    display: inline;
-    font-size: 16px;
-    font-weight: 600;
-  }
-
-  .bottom-nav .add-button {
-    position: static;
-    margin: 32px 32px;
-    width: calc(100% - 64px);
-    border-radius: 16px;
-    height: 54px;
-    transform: none;
-    flex-direction: row;
-    justify-content: center;
-    order: -1;
-    box-shadow: 0 4px 12px rgba(23, 181, 162, 0.3);
-  }
-
-  .bottom-nav .add-button:hover {
-    transform: translateY(-2px);
+    max-width: 900px;
   }
 
   .balance-card:hover,
@@ -1419,12 +1371,11 @@ select:focus {
 
 @media (min-width: 1280px) {
   .app-mobile {
-    max-width: 1200px;
-    margin-left: 280px;
+    max-width: 1000px;
   }
 
   .bottom-nav {
-    width: 280px;
+    max-width: 1000px;
   }
 
   .main-balance {
