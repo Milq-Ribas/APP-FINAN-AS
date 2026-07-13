@@ -80,7 +80,7 @@ select option {
   margin: 0 auto;
   position: relative;
   overflow-x: hidden;
-  padding-bottom: 82px;
+  padding-bottom: 140px;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
   background-color: var(--bg-color);
 }
@@ -1391,27 +1391,49 @@ select option {
 /* ── Forecast / Expected Profit row ───────────────────── */
 
 .forecast-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  display: flex;
+  width: 100%;
   margin-top: 16px;
   flex-shrink: 0;
 }
 
 .forecast-row .forecast-box {
   margin-top: 0;
+  width: 100%;
+  display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 14px;
+  padding: 18px 14px;
+  text-align: center;
 }
 
 .forecast-row .forecast-box span {
-  font-size: 11px;
+  font-size: 12px;
+  letter-spacing: 1px;
 }
 
 .forecast-row .forecast-box strong {
-  font-size: 16px;
+  font-size: 24px;
+}
+
+.forecast-positive {
+  color: var(--primary-color) !important;
+}
+
+.forecast-negative {
+  color: var(--danger-color) !important;
+}
+
+.bg-positive {
+  background: rgba(23, 181, 162, 0.1) !important;
+  border-color: rgba(23, 181, 162, 0.3) !important;
+}
+
+.bg-negative {
+  background: rgba(255, 92, 92, 0.1) !important;
+  border-color: rgba(255, 92, 92, 0.3) !important;
 }
 
 /* ── Delete Confirm Modal ─────────────────────────────── */

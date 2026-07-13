@@ -299,11 +299,15 @@ function App() {
     }
 
     const isInstallment = Number(form.installment_total) > 1
-    const repeatCount = isInstallment
+    let repeatCount = isInstallment
       ? Number(form.installment_total)
       : form.recurrence === 'none'
         ? 1
         : Number(form.repeat_count)
+
+    if (form.recurrence !== 'none' && (!repeatCount || repeatCount < 2)) {
+      repeatCount = 120
+    }
 
     const recurrenceGroupId = crypto.randomUUID()
 
@@ -629,7 +633,7 @@ function App() {
             </div>
 
             <div className="forecast-row">
-              <footer className="forecast-box" style={{ width: '100%' }}>
+              <footer className={`forecast-box ${summary.expectedBalance < 0 ? 'bg-negative' : 'bg-positive'}`} style={{ width: '100%' }}>
                 <span>LUCRO MENSAL PREVISTO</span>
                 <strong className={summary.expectedBalance < 0 ? 'forecast-negative' : 'forecast-positive'}>
                   {summary.expectedBalance < 0 ? `-${formatMoney(Math.abs(summary.expectedBalance))}` : formatMoney(summary.expectedBalance)}
