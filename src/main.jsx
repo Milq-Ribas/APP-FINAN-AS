@@ -1113,7 +1113,11 @@ function ExpenseChartCard({ expensesByCategory, CHART_COLORS }) {
                   <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value) => formatMoney(value)} />
+              <Tooltip 
+                formatter={(value) => formatMoney(value)}
+                contentStyle={{ backgroundColor: 'var(--surface-color)', border: '1px solid var(--glass-border)', borderRadius: '12px' }}
+                itemStyle={{ color: 'var(--text-main)' }}
+              />
             </PieChart>
           </ResponsiveContainer>
         </div>
