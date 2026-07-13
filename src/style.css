@@ -63,6 +63,11 @@ select:focus {
   background: rgba(0, 0, 0, 0.4);
 }
 
+select option {
+  background-color: var(--surface-color);
+  color: var(--text-main);
+}
+
 .dark-bg {
   background: radial-gradient(circle at 50% 0%, rgba(13, 74, 67, 0.2), transparent 50%),
               linear-gradient(180deg, #0c0c0c 0%, #121212 100%);
