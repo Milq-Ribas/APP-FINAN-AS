@@ -628,9 +628,13 @@ function App() {
               </select>
             </div>
 
-            <div className="filter-total">
-              <span>Soma do filtro</span>
-              <strong>{formatMoney(summary.filteredTotal)}</strong>
+            <div className="forecast-row">
+              <footer className="forecast-box" style={{ width: '100%' }}>
+                <span>LUCRO MENSAL PREVISTO</span>
+                <strong className={summary.expectedBalance < 0 ? 'forecast-negative' : 'forecast-positive'}>
+                  {summary.expectedBalance < 0 ? `-${formatMoney(Math.abs(summary.expectedBalance))}` : formatMoney(summary.expectedBalance)}
+                </strong>
+              </footer>
             </div>
 
             <div className="transactions-list">
@@ -669,14 +673,6 @@ function App() {
               ))}
             </div>
 
-            <div className="forecast-row">
-              <footer className="forecast-box" style={{ width: '100%' }}>
-                <span>LUCRO MENSAL PREVISTO</span>
-                <strong className={summary.expectedBalance < 0 ? 'forecast-negative' : 'forecast-positive'}>
-                  {summary.expectedBalance < 0 ? `-${formatMoney(Math.abs(summary.expectedBalance))}` : formatMoney(summary.expectedBalance)}
-                </strong>
-              </footer>
-            </div>
           </section>
         </section>
       )}
