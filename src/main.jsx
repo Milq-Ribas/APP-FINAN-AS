@@ -124,6 +124,8 @@ function App() {
   const [session, setSession] = useState(null)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [authMode, setAuthMode] = useState('login')
+  const [authLoading, setAuthLoading] = useState(false)
   const [loading, setLoading] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -190,24 +192,76 @@ function App() {
   }, [alerts, hasShownAlertPopup, view])
 
   async function fetchTransactions() {
-    const { data, error } = await supabase
-      .from('transactions')
-      .select('*')
-      .order('due_date', { ascending: false })
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('due_date', { ascending: false })
 
-    if (error) {
-      setMessage(error.message)
-      return
+      if (error) {
+        setMessage(error.message)
+        return
+      }
+
+      setTransactions(data || [])
+    } catch (err) {
+      console.error('Erro ao buscar transações:', err)
+      setMessage(
+        err.message === 'Failed to fetch'
+          ? 'Erro de conexão com o Supabase. Verifique se o projeto no Supabase está ativo e se a URL e a Anon Key no .env estão corretas.'
+          : err.message || 'Erro ao carregar dados.'
+      )
     }
-
-    setTransactions(data || [])
   }
-
 
   async function signIn() {
     setMessage('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) setMessage(error.message)
+    if (!email || !password) {
+      setMessage('Preencha o e-mail e a senha.')
+      return
+    }
+    setAuthLoading(true)
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) setMessage(error.message)
+    } catch (err) {
+      setMessage(
+        err.message === 'Failed to fetch'
+          ? 'Erro de conexão com o Supabase. Verifique a URL e a Anon Key no .env ou se o projeto está ativo.'
+          : err.message
+      )
+    }
+    setAuthLoading(false)
+  }
+
+  async function signUp() {
+    setMessage('')
+    if (!email || !password) {
+      setMessage('Preencha o e-mail e a senha.')
+      return
+    }
+    if (password.length < 6) {
+      setMessage('A senha deve ter no mínimo 6 caracteres.')
+      return
+    }
+    setAuthLoading(true)
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password })
+      if (error) {
+        setMessage(error.message)
+      } else if (data.session) {
+        setMessage('Conta criada e autenticada com sucesso!')
+      } else {
+        setMessage('Conta criada! Se a confirmação por e-mail estiver ativa no Supabase, verifique sua caixa de entrada para confirmar.')
+      }
+    } catch (err) {
+      setMessage(
+        err.message === 'Failed to fetch'
+          ? 'Erro de conexão com o Supabase. Verifique a URL e a Anon Key no .env ou se o projeto está ativo.'
+          : err.message
+      )
+    }
+    setAuthLoading(false)
   }
 
   async function signOut() {
@@ -274,18 +328,72 @@ function App() {
     event.preventDefault()
     setMessage('')
 
-    if (form.id) {
-      const { error } = await supabase
-        .from('transactions')
-        .update({
+    try {
+      if (form.id) {
+        const { error } = await supabase
+          .from('transactions')
+          .update({
+            description: form.description,
+            amount: Number(form.amount),
+            type: form.type,
+            category: form.category,
+            due_date: form.due_date,
+            status: form.status,
+          })
+          .eq('id', form.id)
+
+        if (error) {
+          setMessage(error.message)
+          return
+        }
+
+        setForm(initialForm)
+        setIsModalOpen(false)
+        fetchTransactions()
+        return
+      }
+
+      const isInstallment = Number(form.installment_total) > 1
+      let repeatCount = isInstallment
+        ? Number(form.installment_total)
+        : form.recurrence === 'none'
+          ? 1
+          : Number(form.repeat_count)
+
+      if (form.recurrence !== 'none' && (!repeatCount || repeatCount < 1)) {
+        repeatCount = 12
+      }
+
+      const recurrenceGroupId = crypto.randomUUID()
+
+      const rows = Array.from({ length: repeatCount }).map((_, index) => {
+        let dueDate = form.due_date
+
+        if (isInstallment || form.recurrence === 'monthly') {
+          dueDate = addMonths(form.due_date, index)
+        }
+
+        if (!isInstallment && form.recurrence === 'weekly') {
+          dueDate = addWeeks(form.due_date, index)
+        }
+
+        return {
           description: form.description,
           amount: Number(form.amount),
           type: form.type,
           category: form.category,
-          due_date: form.due_date,
+          person: 'Casal',
+          due_date: dueDate,
           status: form.status,
-        })
-        .eq('id', form.id)
+          recurrence: (isInstallment || form.recurrence === 'weekly') ? 'none' : form.recurrence,
+          recurrence_group_id: repeatCount > 1 ? recurrenceGroupId : null,
+          installment_current: isInstallment ? index + 1 : 1,
+          installment_total: isInstallment ? Number(form.installment_total) : 1,
+          user_id: session.user.id
+        }
+      })
+
+      const { error } = await supabase.from('transactions').insert(rows)
 
       if (error) {
         setMessage(error.message)
@@ -295,59 +403,14 @@ function App() {
       setForm(initialForm)
       setIsModalOpen(false)
       fetchTransactions()
-      return
+    } catch (err) {
+      console.error('Erro ao salvar no Supabase:', err)
+      setMessage(
+        err.message === 'Failed to fetch'
+          ? 'Erro de conexão com o Supabase. Verifique se o projeto no Supabase está ativo, se a URL e a Anon Key no .env estão corretas, e se você executou o script database.sql.'
+          : err.message || 'Erro ao salvar transação.'
+      )
     }
-
-    const isInstallment = Number(form.installment_total) > 1
-    let repeatCount = isInstallment
-      ? Number(form.installment_total)
-      : form.recurrence === 'none'
-        ? 1
-        : Number(form.repeat_count)
-
-    if (form.recurrence !== 'none' && (!repeatCount || repeatCount < 2)) {
-      repeatCount = 120
-    }
-
-    const recurrenceGroupId = crypto.randomUUID()
-
-    const rows = Array.from({ length: repeatCount }).map((_, index) => {
-      let dueDate = form.due_date
-
-      if (isInstallment || form.recurrence === 'monthly') {
-        dueDate = addMonths(form.due_date, index)
-      }
-
-      if (!isInstallment && form.recurrence === 'weekly') {
-        dueDate = addWeeks(form.due_date, index)
-      }
-
-      return {
-        description: form.description,
-        amount: Number(form.amount),
-        type: form.type,
-        category: form.category,
-        person: 'Casal',
-        due_date: dueDate,
-        status: form.status,
-        recurrence: (isInstallment || form.recurrence === 'weekly') ? 'none' : form.recurrence,
-        recurrence_group_id: repeatCount > 1 ? recurrenceGroupId : null,
-        installment_current: isInstallment ? index + 1 : 1,
-        installment_total: isInstallment ? Number(form.installment_total) : 1,
-        user_id: session.user.id
-      }
-    })
-
-    const { error } = await supabase.from('transactions').insert(rows)
-
-    if (error) {
-      setMessage(error.message)
-      return
-    }
-
-    setForm(initialForm)
-    setIsModalOpen(false)
-    fetchTransactions()
   }
 
   async function updateTransactionStatus(id, nextStatus) {
@@ -539,18 +602,84 @@ function App() {
           <img src="/logo.png" alt="FINANCE" className="auth-logo" />
           <p>Organize suas finanças pessoais.</p>
 
-          <input placeholder="E-mail" value={email} onChange={e => setEmail(e.target.value)} />
+          <div className="auth-tabs" style={{ display: 'flex', gap: '8px', marginBottom: '16px', width: '100%' }}>
+            <button
+              type="button"
+              className={`tab-btn ${authMode === 'login' ? 'active' : ''}`}
+              onClick={() => { setAuthMode('login'); setMessage(''); }}
+              style={{
+                flex: 1,
+                padding: '10px',
+                borderRadius: '8px',
+                border: 'none',
+                background: authMode === 'login' ? 'var(--primary-color, #17b5a2)' : 'rgba(255, 255, 255, 0.05)',
+                color: '#fff',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              Entrar
+            </button>
+            <button
+              type="button"
+              className={`tab-btn ${authMode === 'register' ? 'active' : ''}`}
+              onClick={() => { setAuthMode('register'); setMessage(''); }}
+              style={{
+                flex: 1,
+                padding: '10px',
+                borderRadius: '8px',
+                border: 'none',
+                background: authMode === 'register' ? 'var(--primary-color, #17b5a2)' : 'rgba(255, 255, 255, 0.05)',
+                color: '#fff',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              Criar Conta
+            </button>
+          </div>
+
+          <input
+            placeholder="E-mail"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
           
           <div className="password-input-wrapper">
-            <input placeholder="Senha" type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} />
+            <input
+              placeholder={authMode === 'login' ? "Senha" : "Senha (mínimo 6 caracteres)"}
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
             <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)} aria-label="Mostrar senha">
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
 
-          <button onClick={signIn}>Entrar</button>
+          {authMode === 'login' ? (
+            <button onClick={signIn} disabled={authLoading}>
+              {authLoading ? 'Entrando...' : 'Entrar'}
+            </button>
+          ) : (
+            <button onClick={signUp} disabled={authLoading}>
+              {authLoading ? 'Cadastrando...' : 'Criar Conta'}
+            </button>
+          )}
 
-          {message && <p className="message">{message}</p>}
+          {message && (
+            <p
+              className="message"
+              style={{
+                marginTop: '12px',
+                fontSize: '0.88rem',
+                color: message.includes('sucesso') || message.includes('criada') ? '#10b981' : '#f87171'
+              }}
+            >
+              {message}
+            </p>
+          )}
         </section>
       </main>
     )
