@@ -15,7 +15,12 @@ import {
   Bell,
   Eye,
   EyeOff,
-  Search
+  Search,
+  ArrowUpRight,
+  ArrowDownRight,
+  Wallet,
+  TrendingUp,
+  Sparkles
 } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import './style.css'
@@ -700,21 +705,53 @@ function App() {
             </button>
           </header>
 
-          <section className="balance-card">
-            <MonthSelector value={monthFilter} onChange={setMonthFilter} />
+          <section className="balance-card modern-balance-card">
+            <div className="balance-top-row">
+              <MonthSelector value={monthFilter} onChange={setMonthFilter} />
+            </div>
 
-            <span className="soft-label">Saldo em conta:</span>
-            <strong className="main-balance">{formatMoney(summary.accountBalance)}</strong>
+            <div className="balance-hero">
+              <div className="balance-hero-header">
+                <div className="wallet-badge">
+                  <Wallet size={16} />
+                  <span>SALDO EM CONTA</span>
+                </div>
+              </div>
+              <strong className="main-balance hero-balance">{formatMoney(summary.accountBalance)}</strong>
+            </div>
 
-            <div className="money-pills">
-              <div>
-                <span>Recebidas</span>
-                <strong className="pill green-pill">{formatMoney(summary.receivedIncome)}</strong>
+            {/* Grid de Estatísticas (Receitas e Despesas) */}
+            <div className="dashboard-stats-grid">
+              <div className="stat-tile income-tile">
+                <div className="tile-icon-wrapper income-badge">
+                  <ArrowUpRight size={18} />
+                </div>
+                <div className="tile-content">
+                  <span className="tile-label">Recebidas</span>
+                  <strong className="tile-value income-value">{formatMoney(summary.receivedIncome)}</strong>
+                </div>
               </div>
-              <div>
-                <span>Despesas</span>
-                <strong className="pill red-pill">{formatMoney(summary.allExpenses)}</strong>
+
+              <div className="stat-tile expense-tile">
+                <div className="tile-icon-wrapper expense-badge">
+                  <ArrowDownRight size={18} />
+                </div>
+                <div className="tile-content">
+                  <span className="tile-label">Despesas</span>
+                  <strong className="tile-value expense-value">{formatMoney(summary.allExpenses)}</strong>
+                </div>
               </div>
+            </div>
+
+            {/* Banner de Saldo Previsto */}
+            <div className="forecast-banner">
+              <div className="forecast-info">
+                <TrendingUp size={15} className="forecast-icon" />
+                <span>Saldo Previsto:</span>
+              </div>
+              <strong className={`forecast-amount ${summary.expectedBalance < 0 ? 'negative' : 'positive'}`}>
+                {expectedBalanceText}
+              </strong>
             </div>
           </section>
 
@@ -917,68 +954,129 @@ function BottomNav({ activeView, setView, openAdd, openProfile, signOut }) {
 
 function TransactionModal({ form, setForm, onSubmit, onClose, message }) {
   const isEditing = Boolean(form.id)
-  const isInstallment = Number(form.installment_total) > 1
+  const isExpense = form.type === 'expense'
 
   return (
-    <div className="modal-backdrop">
-      <form className="modal-card" onSubmit={onSubmit}>
+    <div className="modal-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <form className="modal-card modern-modal" onSubmit={onSubmit}>
         <div className="modal-header">
-          <h2>{isEditing ? 'Editar lançamento' : 'Novo lançamento'}</h2>
-          <button type="button" onClick={onClose} aria-label="Fechar"><X size={22} /></button>
+          <div>
+            <span className="modal-subtitle">{isEditing ? 'EDITAR LANÇAMENTO' : 'NOVO LANÇAMENTO'}</span>
+            <h2>{isEditing ? 'Atualizar Dados' : (isExpense ? 'Nova Despesa 💸' : 'Nova Receita 💰')}</h2>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Fechar" className="close-btn">
+            <X size={20} />
+          </button>
         </div>
 
+        {/* Segmented Control para Tipo */}
+        <div className="segmented-control type-segmented">
+          <button
+            type="button"
+            className={`segmented-option expense-opt ${form.type === 'expense' ? 'active' : ''}`}
+            onClick={() => setForm({ ...form, type: 'expense' })}
+          >
+            <span>💸 Despesa</span>
+          </button>
+          <button
+            type="button"
+            className={`segmented-option income-opt ${form.type === 'income' ? 'active' : ''}`}
+            onClick={() => setForm({ ...form, type: 'income' })}
+          >
+            <span>💰 Receita</span>
+          </button>
+        </div>
+
+        {/* Descrição */}
         <div className="form-group">
           <label className="form-label">Descrição</label>
-          <input placeholder="Ex: Aluguel, Salário..." value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} required />
+          <input
+            placeholder="Ex: Aluguel, Mercado, Salário..."
+            value={form.description}
+            onChange={e => setForm({ ...form, description: e.target.value })}
+            required
+            className="modern-input"
+          />
         </div>
 
+        {/* Valor Hero Input */}
         <div className="form-group">
-          <label className="form-label">Valor (R$)</label>
-          <input placeholder="0,00" type="number" step="0.01" min="0.01" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} required />
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">Tipo e status</label>
-          <div className="two-columns">
-            <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
-              <option value="expense">💸 Despesa</option>
-              <option value="income">💰 Receita</option>
-            </select>
-
-            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
-              <option value="pending">⏳ Pendente</option>
-              <option value="paid">✅ Pago/recebido</option>
-            </select>
+          <label className="form-label">Valor do Lançamento</label>
+          <div className="amount-input-wrapper">
+            <span className="currency-symbol">R$</span>
+            <input
+              placeholder="0,00"
+              type="number"
+              step="0.01"
+              min="0.01"
+              value={form.amount}
+              onChange={e => setForm({ ...form, amount: e.target.value })}
+              required
+              className="amount-input"
+            />
           </div>
         </div>
 
+        {/* Status */}
         <div className="form-group">
-          <label className="form-label">Categoria e vencimento</label>
+          <label className="form-label">Status do Pagamento</label>
+          <div className="segmented-control status-segmented">
+            <button
+              type="button"
+              className={`segmented-option status-pending ${form.status === 'pending' ? 'active' : ''}`}
+              onClick={() => setForm({ ...form, status: 'pending' })}
+            >
+              <span>⏳ {form.type === 'income' ? 'A Receber' : 'A Pagar'}</span>
+            </button>
+            <button
+              type="button"
+              className={`segmented-option status-paid ${form.status === 'paid' ? 'active' : ''}`}
+              onClick={() => setForm({ ...form, status: 'paid' })}
+            >
+              <span>✅ {form.type === 'income' ? 'Recebido' : 'Pago'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Categoria e Vencimento */}
+        <div className="form-group">
+          <label className="form-label">Categoria e Vencimento</label>
           <div className="two-columns">
-            <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
+            <select
+              value={form.category}
+              onChange={e => setForm({ ...form, category: e.target.value })}
+              className="modern-select"
+            >
               {categoryOptions.map(cat => (
                 <option key={cat.name} value={cat.name}>{cat.icon} {cat.name}</option>
               ))}
             </select>
 
-            <input type="date" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} />
+            <input
+              type="date"
+              value={form.due_date}
+              onChange={e => setForm({ ...form, due_date: e.target.value })}
+              className="modern-input"
+            />
           </div>
         </div>
 
+        {/* Repetição / Parcelas */}
         {!isEditing && (
           <div className="form-group">
-            <label className="form-label">Repetição</label>
+            <label className="form-label">Repetição / Parcelamento</label>
             <select
               value={form.recurrence}
               onChange={e => setForm({ ...form, recurrence: e.target.value, installment_total: '1', repeat_count: '2' })}
+              className="modern-select"
             >
-              <option value="none">🔁 Não repetir</option>
-              <option value="weekly">🗓 Semanal</option>
-              <option value="monthly">📅 Mensal</option>
+              <option value="none">🔁 À Vista / Único</option>
+              <option value="weekly">🗓 Recorrente Semanal</option>
+              <option value="monthly">📅 Recorrente Mensal</option>
             </select>
 
             {(form.recurrence === 'monthly' || form.recurrence === 'weekly') && (
-              <div style={{ marginTop: '12px' }}>
+              <div style={{ marginTop: '10px' }}>
                 <label className="form-label">Quantas vezes?</label>
                 <input
                   type="number"
@@ -986,34 +1084,43 @@ function TransactionModal({ form, setForm, onSubmit, onClose, message }) {
                   max="999"
                   value={form.repeat_count}
                   onChange={e => setForm({ ...form, repeat_count: e.target.value })}
-                  placeholder="Ex: 12"
-                  style={{ width: '100%' }}
+                  placeholder="Ex: 12 (1 ano)"
+                  className="modern-input"
                 />
               </div>
             )}
 
             {form.recurrence === 'none' && (
-              <div style={{ marginTop: '12px' }}>
-                <label className="form-label">Parcelas (parcelado no cartão?)</label>
+              <div style={{ marginTop: '10px' }}>
+                <label className="form-label">Número de Parcelas no Cartão</label>
                 <input
                   type="number"
                   min="1"
                   max="999"
                   value={form.installment_total}
                   onChange={e => setForm({ ...form, installment_total: e.target.value })}
-                  placeholder="1 = à vista"
-                  style={{ width: '100%' }}
+                  placeholder="1 = À vista"
+                  className="modern-input"
                 />
               </div>
             )}
           </div>
         )}
 
-        <button className="submit-button" type="submit">
-          {isEditing ? 'Salvar alterações' : 'Adicionar'}
+        {/* Botão de Envio */}
+        <button
+          className={`submit-button action-btn ${isExpense ? 'btn-expense' : 'btn-income'}`}
+          type="submit"
+        >
+          {isEditing ? 'Salvar Alterações' : (isExpense ? 'Adicionar Despesa' : 'Adicionar Receita')}
         </button>
 
-        {message && <p className="message">{message}</p>}
+        {/* Toast Alert */}
+        {message && (
+          <div className={`toast-alert ${message.includes('sucesso') ? 'toast-success' : 'toast-error'}`}>
+            <span>{message}</span>
+          </div>
+        )}
       </form>
     </div>
   )

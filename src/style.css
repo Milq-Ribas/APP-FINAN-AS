@@ -1607,3 +1607,381 @@ select option {
   background: rgba(255, 255, 255, 0.1);
   border-color: var(--primary-color);
 }
+
+/* ── Modern Transaction Modal UI/UX Upgrade ──────────────── */
+.modern-modal {
+  background: rgba(18, 22, 28, 0.92) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(23, 181, 162, 0.1) !important;
+  border-radius: 32px !important;
+  padding: 24px 20px !important;
+}
+
+.modal-subtitle {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: var(--primary-color);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  border-radius: 50% !important;
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Segmented Controls */
+.segmented-control {
+  display: flex;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.segmented-option {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.segmented-option.active {
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.expense-opt.active {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4) !important;
+}
+
+.income-opt.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4) !important;
+}
+
+.status-pending.active {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35) !important;
+}
+
+.status-paid.active {
+  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
+  box-shadow: 0 4px 14px rgba(20, 184, 166, 0.35) !important;
+}
+
+/* Modern Inputs & Selects */
+.modern-input,
+.modern-select {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  color: #fff !important;
+  padding: 13px 16px !important;
+  font-size: 15px !important;
+  transition: all 0.2s ease !important;
+}
+
+.modern-input:focus,
+.modern-select:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(23, 181, 162, 0.25) !important;
+}
+
+/* Amount Hero Input Wrapper */
+.amount-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 16px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--primary-color);
+  pointer-events: none;
+}
+
+.amount-input {
+  padding-left: 48px !important;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  letter-spacing: -0.5px;
+  background: rgba(23, 181, 162, 0.06) !important;
+  border: 1px solid rgba(23, 181, 162, 0.25) !important;
+  border-radius: 18px !important;
+}
+
+.amount-input:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 4px rgba(23, 181, 162, 0.3) !important;
+  background: rgba(23, 181, 162, 0.12) !important;
+}
+
+/* Vibrant Action Buttons */
+.action-btn {
+  width: 100%;
+  min-height: 54px;
+  border-radius: 18px;
+  font-size: 16px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  color: #ffffff !important;
+  letter-spacing: 0.2px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-expense {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+  box-shadow: 0 8px 24px -4px rgba(239, 68, 68, 0.45) !important;
+}
+
+.btn-expense:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -4px rgba(239, 68, 68, 0.6) !important;
+}
+
+.btn-income {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important;
+  box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.45) !important;
+}
+
+.btn-income:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -4px rgba(16, 185, 129, 0.6) !important;
+}
+
+.action-btn:active {
+  transform: scale(0.98);
+}
+
+/* Toast Alert UI */
+.toast-alert {
+  padding: 14px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideDownToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDownToast {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.toast-error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+.toast-success {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+}
+
+/* ── Modern Dashboard Balance Card ────────────────────────── */
+.modern-balance-card {
+  background: linear-gradient(145deg, rgba(20, 24, 33, 0.85) 0%, rgba(12, 14, 18, 0.95) 100%) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(23, 181, 162, 0.22) !important;
+  border-radius: 32px !important;
+  padding: 24px 20px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(23, 181, 162, 0.08) !important;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.modern-balance-card::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(23, 181, 162, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.balance-top-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.balance-hero {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.wallet-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(23, 181, 162, 0.12);
+  border: 1px solid rgba(23, 181, 162, 0.25);
+  color: var(--primary-color);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.hero-balance {
+  font-size: 38px !important;
+  font-weight: 900 !important;
+  letter-spacing: -1px;
+  color: #ffffff !important;
+  display: block;
+  line-height: 1.1;
+  text-shadow: 0 0 20px rgba(23, 181, 162, 0.25);
+}
+
+/* Stats Grid */
+.dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.stat-tile {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.stat-tile:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.tile-icon-wrapper {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.income-badge {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.expense-badge {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.tile-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.tile-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.tile-value {
+  font-size: 15px;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.income-value {
+  color: #34d399;
+}
+
+.expense-value {
+  color: #f87171;
+}
+
+/* Forecast Banner */
+.forecast-banner {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.forecast-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.forecast-icon {
+  color: var(--primary-color);
+}
+
+.forecast-amount {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.forecast-amount.positive {
+  color: #34d399;
+}
+
+.forecast-amount.negative {
+  color: #f87171;
+}
+
+
