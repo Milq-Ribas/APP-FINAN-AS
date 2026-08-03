@@ -723,71 +723,50 @@ function App() {
 
           <section className="balance-card modern-balance-card">
             <div className="balance-top-row">
-              <MonthSelector value={monthFilter} onChange={setMonthFilter} />
+              <div className="wallet-badge">
+                <Wallet size={15} />
+                <span>SALDO EM CONTA</span>
+              </div>
+              <MonthSelector value={monthFilter} onChange={setMonthFilter} compact />
             </div>
 
             <div className="balance-hero">
-              <div className="balance-hero-header">
-                <div className="wallet-badge">
-                  <Wallet size={16} />
-                  <span>SALDO EM CONTA</span>
-                </div>
-              </div>
               <strong className="main-balance hero-balance">{formatMoney(summary.accountBalance)}</strong>
             </div>
 
-            {/* Quick Action Shortcuts */}
-            <div className="home-quick-actions">
-              <button className="quick-action-btn expense-btn" onClick={() => openCreateModal('expense')}>
-                <Plus size={15} />
-                <span>Despesa</span>
-              </button>
-              <button className="quick-action-btn income-btn" onClick={() => openCreateModal('income')}>
-                <Plus size={15} />
-                <span>Receita</span>
-              </button>
-              <button className="quick-action-btn nav-btn" onClick={() => setView('transactions')}>
-                <ReceiptText size={15} />
-                <span>Extrato</span>
-              </button>
-              <button className="quick-action-btn export-btn" onClick={exportToCSV}>
-                <Download size={15} />
-                <span>CSV</span>
-              </button>
-            </div>
-
-            {/* Grid de Estatísticas (Receitas e Despesas) */}
-            <div className="dashboard-stats-grid">
-              <div className="stat-tile income-tile">
-                <div className="tile-icon-wrapper income-badge">
-                  <ArrowUpRight size={18} />
+            {/* Stack de Métricas (Recebidas, Despesas e Saldo Previsto em linhas completas) */}
+            <div className="balance-metrics-stack">
+              <div className="metric-row-full income-row">
+                <div className="metric-info-group">
+                  <div className="tile-icon-wrapper income-badge">
+                    <ArrowUpRight size={18} />
+                  </div>
+                  <span className="metric-label">RECEBIDAS</span>
                 </div>
-                <div className="tile-content">
-                  <span className="tile-label">Recebidas</span>
-                  <strong className="tile-value income-value">{formatMoney(summary.receivedIncome)}</strong>
-                </div>
+                <strong className="metric-value income-value">{formatMoney(summary.receivedIncome)}</strong>
               </div>
 
-              <div className="stat-tile expense-tile">
-                <div className="tile-icon-wrapper expense-badge">
-                  <ArrowDownRight size={18} />
+              <div className="metric-row-full expense-row">
+                <div className="metric-info-group">
+                  <div className="tile-icon-wrapper expense-badge">
+                    <ArrowDownRight size={18} />
+                  </div>
+                  <span className="metric-label">DESPESAS</span>
                 </div>
-                <div className="tile-content">
-                  <span className="tile-label">Despesas</span>
-                  <strong className="tile-value expense-value">{formatMoney(summary.allExpenses)}</strong>
-                </div>
+                <strong className="metric-value expense-value">{formatMoney(summary.allExpenses)}</strong>
               </div>
-            </div>
 
-            {/* Banner de Saldo Previsto */}
-            <div className="forecast-banner">
-              <div className="forecast-info">
-                <TrendingUp size={15} className="forecast-icon" />
-                <span>Saldo Previsto:</span>
+              <div className="metric-row-full forecast-row">
+                <div className="metric-info-group">
+                  <div className="tile-icon-wrapper forecast-badge">
+                    <TrendingUp size={18} />
+                  </div>
+                  <span className="metric-label">SALDO PREVISTO</span>
+                </div>
+                <strong className={`metric-value ${summary.expectedBalance < 0 ? 'expense-value' : 'income-value'}`}>
+                  {expectedBalanceText}
+                </strong>
               </div>
-              <strong className={`forecast-amount ${summary.expectedBalance < 0 ? 'negative' : 'positive'}`}>
-                {expectedBalanceText}
-              </strong>
             </div>
           </section>
 
@@ -835,17 +814,9 @@ function App() {
             </div>
 
             <div className="forecast-row">
-              <div className="forecast-card-modern">
-                <div className="forecast-card-left">
-                  <div className="forecast-card-icon">
-                    <Sparkles size={20} />
-                  </div>
-                  <div className="forecast-card-text">
-                    <span className="forecast-card-label">Lucro Mensal Previsto</span>
-                    <span className="forecast-card-sub">Saldo esperado ao fim do mês</span>
-                  </div>
-                </div>
-                <strong className={`forecast-card-value ${summary.expectedBalance < 0 ? 'negative' : 'positive'}`}>
+              <div className="forecast-card-clean">
+                <span className="forecast-label-simple">Lucro Previsto</span>
+                <strong className={`forecast-value-simple ${summary.expectedBalance < 0 ? 'negative' : 'positive'}`}>
                   {expectedBalanceText}
                 </strong>
               </div>
