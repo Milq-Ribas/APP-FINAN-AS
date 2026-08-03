@@ -799,12 +799,20 @@ function App() {
             </div>
 
             <div className="forecast-row">
-              <footer className={`forecast-box ${summary.expectedBalance < 0 ? 'bg-negative' : 'bg-positive'}`} style={{ width: '100%' }}>
-                <span>LUCRO MENSAL PREVISTO</span>
-                <strong className={summary.expectedBalance < 0 ? 'forecast-negative' : 'forecast-positive'}>
-                  {summary.expectedBalance < 0 ? `-${formatMoney(Math.abs(summary.expectedBalance))}` : formatMoney(summary.expectedBalance)}
+              <div className="forecast-card-modern">
+                <div className="forecast-card-left">
+                  <div className="forecast-card-icon">
+                    <Sparkles size={20} />
+                  </div>
+                  <div className="forecast-card-text">
+                    <span className="forecast-card-label">Lucro Mensal Previsto</span>
+                    <span className="forecast-card-sub">Saldo esperado ao fim do mês</span>
+                  </div>
+                </div>
+                <strong className={`forecast-card-value ${summary.expectedBalance < 0 ? 'negative' : 'positive'}`}>
+                  {expectedBalanceText}
                 </strong>
-              </footer>
+              </div>
             </div>
 
             <div className="transactions-list">

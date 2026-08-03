@@ -1881,30 +1881,32 @@ select option {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-bottom: 18px;
+  width: 100%;
+  margin-bottom: 16px;
 }
 
 .stat-tile {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 20px;
-  padding: 14px;
+  padding: 12px 10px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  min-width: 0; /* IMPEDE CORTE E OVERFLOW NO MOBILE */
+  overflow: hidden;
   transition: all 0.2s ease;
 }
 
 .stat-tile:hover {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px);
 }
 
 .tile-icon-wrapper {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -1925,18 +1927,26 @@ select option {
 .tile-content {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .tile-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .tile-value {
-  font-size: 15px;
+  font-size: clamp(11px, 3.2vw, 15px);
   font-weight: 800;
   margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.3px;
 }
 
 .income-value {
@@ -1983,5 +1993,210 @@ select option {
 .forecast-amount.negative {
   color: #f87171;
 }
+
+/* Modern Forecast Card em Transações */
+.forecast-card-modern {
+  background: linear-gradient(135deg, rgba(23, 181, 162, 0.15) 0%, rgba(20, 26, 30, 0.75) 100%);
+  border: 1px solid rgba(23, 181, 162, 0.3);
+  border-radius: 20px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  width: 100%;
+}
+
+.forecast-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.forecast-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: rgba(23, 181, 162, 0.2);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.forecast-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.forecast-card-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+}
+
+.forecast-card-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.forecast-card-value {
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+
+.forecast-card-value.positive {
+  color: #34d399;
+}
+
+.forecast-card-value.negative {
+  color: #f87171;
+}
+
+/* Circular Progress Card Styles */
+.progress-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  margin-top: 16px;
+  overflow: hidden;
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 700;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.progress-header .chevron {
+  transition: transform 0.3s ease;
+  color: var(--text-muted);
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.progress-body {
+  padding: 0 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.progress-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.progress-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 10;
+}
+
+.progress-bar {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dashoffset: var(--offset);
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.progress-text {
+  position: absolute;
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.progress-labels {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.progress-labels span {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.progress-labels small {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.expected-profit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.expected-profit-row span {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.profit-positive {
+  color: #34d399;
+  font-weight: 800;
+}
+
+.profit-negative {
+  color: #f87171;
+  font-weight: 800;
+}
+
+/* Espaçamento inferior contra sobreposição da BottomNav */
+.app-mobile {
+  padding-bottom: 120px !important;
+}
+
+.home-page {
+  padding-bottom: 30px;
+}
+
+.transactions-page {
+  padding-bottom: 30px;
+}
+
 
 
