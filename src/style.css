@@ -2198,5 +2198,220 @@ select option {
   padding-bottom: 30px;
 }
 
+/* Banner de Alertas Urgentes no Topo */
+.urgent-alert-banner {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(20, 20, 20, 0.6) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 18px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.urgent-alert-banner:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(20, 20, 20, 0.7) 100%);
+  transform: translateY(-1px);
+}
+
+.urgent-alert-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.urgent-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.urgent-alert-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.urgent-alert-text strong {
+  font-size: 13px;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.urgent-alert-text span {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.urgent-action-tag {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.15);
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Barra de Ações Rápidas na Home */
+.home-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 14px 0;
+  width: 100%;
+}
+
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 4px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-main);
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.quick-action-btn:active {
+  transform: scale(0.95);
+}
+
+.quick-action-btn.expense-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.quick-action-btn.income-btn:hover {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}
+
+.quick-action-btn.nav-btn:hover,
+.quick-action-btn.export-btn:hover {
+  background: rgba(23, 181, 162, 0.15);
+  border-color: rgba(23, 181, 162, 0.3);
+  color: var(--primary-color);
+}
+
+/* Botão de Status Rápido no Item de Transação */
+.transaction-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quick-status-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+}
+
+.quick-status-btn.is-paid {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.quick-status-btn.is-paid:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.quick-status-btn.is-pending {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.quick-status-btn.is-pending:hover {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+/* Legenda de Categorias do Gráfico */
+.chart-legend-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.legend-dot-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-name {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.legend-value-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-amount {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.legend-pct {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+/* Micro-interação geral de toque */
+button:active {
+  transform: scale(0.97);
+}
+
 
 

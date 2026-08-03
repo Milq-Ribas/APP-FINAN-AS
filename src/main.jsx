@@ -20,7 +20,8 @@ import {
   ArrowDownRight,
   Wallet,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  Check
 } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import './style.css'
@@ -305,8 +306,8 @@ function App() {
     setDeferredPrompt(null)
   }
 
-  function openCreateModal() {
-    setForm(initialForm)
+  function openCreateModal(type = 'expense') {
+    setForm({ ...initialForm, type })
     setIsModalOpen(true)
   }
 
@@ -705,6 +706,21 @@ function App() {
             </button>
           </header>
 
+          {alerts.length > 0 && (
+            <div className="urgent-alert-banner" onClick={() => setIsNotificationsOpen(true)}>
+              <div className="urgent-alert-left">
+                <div className="urgent-icon-wrapper">
+                  <Bell size={18} />
+                </div>
+                <div className="urgent-alert-text">
+                  <strong>{alerts.length} conta{alerts.length > 1 ? 's' : ''} para atenção</strong>
+                  <span>Vencendo hoje ou atrasada</span>
+                </div>
+              </div>
+              <span className="urgent-action-tag">Resolver</span>
+            </div>
+          )}
+
           <section className="balance-card modern-balance-card">
             <div className="balance-top-row">
               <MonthSelector value={monthFilter} onChange={setMonthFilter} />
@@ -718,6 +734,26 @@ function App() {
                 </div>
               </div>
               <strong className="main-balance hero-balance">{formatMoney(summary.accountBalance)}</strong>
+            </div>
+
+            {/* Quick Action Shortcuts */}
+            <div className="home-quick-actions">
+              <button className="quick-action-btn expense-btn" onClick={() => openCreateModal('expense')}>
+                <Plus size={15} />
+                <span>Despesa</span>
+              </button>
+              <button className="quick-action-btn income-btn" onClick={() => openCreateModal('income')}>
+                <Plus size={15} />
+                <span>Receita</span>
+              </button>
+              <button className="quick-action-btn nav-btn" onClick={() => setView('transactions')}>
+                <ReceiptText size={15} />
+                <span>Extrato</span>
+              </button>
+              <button className="quick-action-btn export-btn" onClick={exportToCSV}>
+                <Download size={15} />
+                <span>CSV</span>
+              </button>
             </div>
 
             {/* Grid de Estatísticas (Receitas e Despesas) */}
@@ -839,9 +875,23 @@ function App() {
                             <span>{getCategoryIcon(item.category)} {getInstallmentsLabel(item)}</span>
                           </div>
 
-                          <div className="transaction-value">
-                            <strong>{formatMoney(item.amount)}</strong>
-                            <span>{state.label}</span>
+                          <div className="transaction-right">
+                            <div className="transaction-value">
+                              <strong>{formatMoney(item.amount)}</strong>
+                              <span>{state.label}</span>
+                            </div>
+                            <button
+                              type="button"
+                              className={`quick-status-btn ${item.status === 'paid' ? 'is-paid' : 'is-pending'}`}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                updateTransactionStatus(item.id, item.status === 'paid' ? 'pending' : 'paid')
+                              }}
+                              title={item.status === 'paid' ? 'Marcar como a pagar/receber' : 'Marcar como pago/recebido'}
+                              aria-label="Alternar status"
+                            >
+                              <Check size={14} />
+                            </button>
                           </div>
                         </article>
                       )
@@ -1341,6 +1391,8 @@ function ExpenseChartCard({ expensesByCategory, CHART_COLORS }) {
 
   if (expensesByCategory.length === 0) return null;
 
+  const totalExpenseSum = expensesByCategory.reduce((sum, item) => sum + Number(item.value || 0), 0)
+
   return (
     <div className="chart-container progress-card" style={{ padding: '0', background: 'var(--glass-bg)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
       <div className="progress-header" onClick={() => setIsCollapsed(!isCollapsed)} style={{ padding: '20px', borderBottom: isCollapsed ? 'none' : '1px solid rgba(255, 255, 255, 0.05)' }}>
@@ -1352,7 +1404,7 @@ function ExpenseChartCard({ expensesByCategory, CHART_COLORS }) {
         <div style={{ padding: '0 20px 20px 20px' }}>
           <ResponsiveContainer width="100%" height={200} style={{ marginTop: '16px' }}>
             <PieChart>
-              <Pie data={expensesByCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5}>
+              <Pie data={expensesByCategory} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={55} outerRadius={75} paddingAngle={4}>
                 {expensesByCategory.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                 ))}
@@ -1364,6 +1416,26 @@ function ExpenseChartCard({ expensesByCategory, CHART_COLORS }) {
               />
             </PieChart>
           </ResponsiveContainer>
+
+          <div className="chart-legend-grid">
+            {expensesByCategory.map((cat, index) => {
+              const pct = totalExpenseSum > 0 ? Math.round((Number(cat.value) / totalExpenseSum) * 100) : 0
+              const color = CHART_COLORS[index % CHART_COLORS.length]
+
+              return (
+                <div key={cat.name} className="legend-item">
+                  <div className="legend-dot-group">
+                    <span className="legend-dot" style={{ backgroundColor: color }}></span>
+                    <span className="legend-name">{getCategoryIcon(cat.name)} {cat.name}</span>
+                  </div>
+                  <div className="legend-value-group">
+                    <strong className="legend-amount">{formatMoney(cat.value)}</strong>
+                    <span className="legend-pct">{pct}%</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
     </div>
