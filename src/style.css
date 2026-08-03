@@ -69,8 +69,7 @@ select option {
 }
 
 .dark-bg {
-  background: radial-gradient(circle at 50% 0%, rgba(13, 74, 67, 0.2), transparent 50%),
-              linear-gradient(180deg, #0c0c0c 0%, #121212 100%);
+  background: #0c0c0c;
   background-attachment: fixed;
 }
 
@@ -1975,6 +1974,7 @@ select option {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  margin-bottom: 24px;
 }
 
 .forecast-label-simple {

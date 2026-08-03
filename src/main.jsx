@@ -68,7 +68,15 @@ const monthNames = [
 const installmentOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 24, 36, 48]
 
 function formatMoney(value) {
-  return Number(value || 0).toLocaleString('pt-BR', {
+  const num = Number(value || 0)
+  if (num < 0) {
+    const formatted = Math.abs(num).toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    })
+    return `- ${formatted}`
+  }
+  return num.toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL'
   })
@@ -589,10 +597,7 @@ function App() {
     }
   }, [monthTransactions, filteredTransactions])
 
-  const expectedBalanceText =
-    summary.expectedBalance < 0
-      ? `-${formatMoney(Math.abs(summary.expectedBalance))}`
-      : formatMoney(summary.expectedBalance)
+  const expectedBalanceText = formatMoney(summary.expectedBalance)
 
   const expectedBalanceClass =
     summary.expectedBalance < 0 ? 'forecast-negative' : 'forecast-positive'
