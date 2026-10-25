@@ -2349,5 +2349,142 @@ button:active {
   transform: scale(0.97);
 }
 
+/* Botão de Modo Privacidade */
+.privacy-toggle-btn {
+  color: var(--text-muted);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.privacy-toggle-btn:hover {
+  color: var(--primary-color);
+  background: rgba(23, 181, 162, 0.12);
+}
+
+/* Profile Badge & Settings */
+.profile-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.profile-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(23, 181, 162, 0.2), rgba(13, 74, 67, 0.4));
+  border: 1px solid rgba(23, 181, 162, 0.3);
+  display: grid;
+  place-items: center;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.profile-user-info {
+  overflow: hidden;
+}
+
+.profile-user-info .profile-label {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-user-info .profile-email {
+  display: block;
+  font-size: 0.95rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.profile-setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.profile-setting-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.profile-setting-item .setting-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-main);
+}
+
+.profile-setting-item .setting-left small {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.toggle-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.toggle-pill.active {
+  background: var(--primary-color);
+  color: #0c0c0c;
+}
+
+/* Ícone de Exclusão estilizado */
+.delete-icon-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 92, 92, 0.12);
+  border: 1px solid rgba(255, 92, 92, 0.25);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 16px;
+}
+
+.delete-icon-circle .delete-icon {
+  color: var(--danger-color);
+}
+
+/* Seletor de ordenação */
+.sort-select {
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.sort-select:focus {
+  border-color: var(--primary-color) !important;
+}
+
+/* Botão de Sair estilizado */
+.nav-logout-btn:hover {
+  color: var(--danger-color) !important;
+}
+
+
 
 
