@@ -29,7 +29,6 @@ export function TransactionModal({
   return (
     <div className="modal-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <form className="modal-card ref-modal-card" onSubmit={onSubmit}>
-        {/* Top Green Gradient Header (Reference Screen 2 Style) */}
         <div className="ref-modal-banner">
           <button
             type="button"
@@ -48,10 +47,10 @@ export function TransactionModal({
         </div>
 
         <div className="ref-modal-body">
-          {/* Card Destinatário / Categoria & Tipo (estilo "Send to" da referência) */}
+          {/* Card de Identificação e Categoria */}
           <div className="ref-recipient-card">
             <div className="ref-recipient-top">
-              <span className="ref-recipient-label">Tipo e Categoria</span>
+              <span className="ref-recipient-label">Tipo de lançamento</span>
               <div className="ref-type-pills">
                 <button
                   type="button"
@@ -70,20 +69,22 @@ export function TransactionModal({
               </div>
             </div>
 
+            <input
+              placeholder={isExpense ? 'Descrição (ex: Aluguel, Mercado...)' : 'Descrição (ex: Salário, Freela...)'}
+              value={form.description}
+              onChange={e => setForm({ ...form, description: e.target.value })}
+              required
+              className="modern-input ref-desc-field"
+              autoFocus
+            />
+
             <div className="ref-recipient-row">
               <div className="ref-category-avatar">
                 <span>{getCategoryIcon(form.category)}</span>
               </div>
               <div className="ref-recipient-details">
-                <input
-                  placeholder={isExpense ? 'Descrição (ex: Aluguel, Mercado...)' : 'Descrição (ex: Salário, Freela...)'}
-                  value={form.description}
-                  onChange={e => setForm({ ...form, description: e.target.value })}
-                  required
-                  className="ref-clean-desc-input"
-                  autoFocus
-                />
-                <span className="ref-recipient-sub">{form.category}</span>
+                <strong className="ref-cat-title">{form.category}</strong>
+                <span className="ref-recipient-sub">Categoria selecionada</span>
               </div>
               <select
                 value={form.category}
@@ -98,9 +99,11 @@ export function TransactionModal({
             </div>
           </div>
 
-          {/* Hero Amount Display (estilo "2.300 BRL" centralizado da referência) */}
+          {/* Hero Amount Display */}
           <div className="ref-amount-hero-section">
+            <span className="ref-amount-caption">Valor do lançamento</span>
             <div className="ref-amount-display">
+              <span className="ref-currency-prefix">R$</span>
               <input
                 placeholder="0,00"
                 type="number"
@@ -154,7 +157,7 @@ export function TransactionModal({
             </div>
 
             {!isEditing && (
-              <div className="form-group" style={{ marginTop: '4px' }}>
+              <div className="form-group">
                 <label className="form-label">Repetição / Parcelamento</label>
                 <div className="two-columns">
                   <select
@@ -226,7 +229,6 @@ export function TransactionModal({
             )}
           </div>
 
-          {/* Botão Branco Estilo Pílula da Referência */}
           <button
             className="ref-white-submit-btn"
             type="submit"
