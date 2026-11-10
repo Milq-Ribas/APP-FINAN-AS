@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, PieChart as PieChartIcon } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { getCategoryIcon } from '../constants/categories'
 import { formatMoney } from '../utils/formatters'
@@ -12,15 +12,7 @@ export function ExpenseChartCard({ expensesByCategory, CHART_COLORS, isPrivate =
   const totalExpenseSum = expensesByCategory.reduce((sum, item) => sum + Number(item.value || 0), 0)
 
   return (
-    <div
-      className="chart-container progress-card"
-      style={{
-        padding: '0',
-        background: 'var(--glass-bg)',
-        backdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255, 255, 255, 0.08)'
-      }}
-    >
+    <div className="chart-container progress-card ds-card">
       <div
         className="progress-header"
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -28,17 +20,22 @@ export function ExpenseChartCard({ expensesByCategory, CHART_COLORS, isPrivate =
         tabIndex={0}
         aria-expanded={!isCollapsed}
         style={{
-          padding: '18px 20px',
+          padding: '16px 18px',
           borderBottom: isCollapsed ? 'none' : '1px solid rgba(255, 255, 255, 0.05)'
         }}
       >
-        <span>Despesas por Categoria</span>
-        <ChevronDown size={20} className={`chevron ${isCollapsed ? 'rotate-180' : ''}`} />
+        <div className="ds-card-title-group">
+          <span className="ds-header-icon">
+            <PieChartIcon size={16} strokeWidth={2.2} />
+          </span>
+          <span>Despesas por Categoria</span>
+        </div>
+        <ChevronDown size={18} className={`chevron ${isCollapsed ? 'rotate-180' : ''}`} />
       </div>
 
       {!isCollapsed && (
-        <div style={{ padding: '0 20px 20px 20px' }}>
-          <ResponsiveContainer width="100%" height={210} style={{ marginTop: '12px' }}>
+        <div style={{ padding: '0 18px 18px 18px' }}>
+          <ResponsiveContainer width="100%" height={200} style={{ marginTop: '10px' }}>
             <PieChart>
               <Pie
                 data={expensesByCategory}
@@ -46,8 +43,8 @@ export function ExpenseChartCard({ expensesByCategory, CHART_COLORS, isPrivate =
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                innerRadius={55}
-                outerRadius={78}
+                innerRadius={54}
+                outerRadius={76}
                 paddingAngle={4}
               >
                 {expensesByCategory.map((_, index) => (
@@ -60,12 +57,12 @@ export function ExpenseChartCard({ expensesByCategory, CHART_COLORS, isPrivate =
               <Tooltip
                 formatter={(value) => formatMoney(value, isPrivate)}
                 contentStyle={{
-                  backgroundColor: 'var(--surface-color)',
-                  border: '1px solid var(--glass-border)',
-                  borderRadius: '12px',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.5)'
+                  backgroundColor: '#13151c',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '14px',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.6)'
                 }}
-                itemStyle={{ color: 'var(--text-main)' }}
+                itemStyle={{ color: '#f4f4f4', fontWeight: 700 }}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -79,7 +76,10 @@ export function ExpenseChartCard({ expensesByCategory, CHART_COLORS, isPrivate =
                 <div key={cat.name} className="legend-item">
                   <div className="legend-dot-group">
                     <span className="legend-dot" style={{ backgroundColor: color }}></span>
-                    <span className="legend-name">{getCategoryIcon(cat.name)} {cat.name}</span>
+                    <span className="legend-cat-icon" style={{ color }}>
+                      {getCategoryIcon(cat.name, { size: 14, strokeWidth: 2.2 })}
+                    </span>
+                    <span className="legend-name">{cat.name}</span>
                   </div>
                   <div className="legend-value-group">
                     <strong className="legend-amount">{formatMoney(cat.value, isPrivate)}</strong>

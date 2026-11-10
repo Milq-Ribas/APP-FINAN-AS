@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Activity } from 'lucide-react'
 
 export function CircularProgress({
   percentage,
   spent,
   total,
   expectedProfit,
-  expectedProfitRaw,
-  isPrivate = false
+  expectedProfitRaw
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const radius = 45
@@ -15,25 +14,34 @@ export function CircularProgress({
   const visualPercentage = Math.min(percentage, 100)
   const offset = circumference - (visualPercentage / 100) * circumference
 
-  let strokeColor = '#17b5a2'
-  if (percentage > 80) strokeColor = '#ff5c5c'
+  let strokeColor = '#10b981'
+  if (percentage > 80) strokeColor = '#f87171'
   else if (percentage > 60) strokeColor = '#f59e0b'
 
   return (
-    <article className="progress-card">
+    <article className="progress-card ds-card">
       <div
         className="progress-header"
         onClick={() => setIsCollapsed(!isCollapsed)}
         role="button"
         tabIndex={0}
         aria-expanded={!isCollapsed}
+        style={{
+          padding: '16px 18px',
+          borderBottom: isCollapsed ? 'none' : '1px solid rgba(255, 255, 255, 0.05)'
+        }}
       >
-        <span>Renda mensal comprometida</span>
-        <ChevronDown size={20} className={`chevron ${isCollapsed ? 'rotate-180' : ''}`} />
+        <div className="ds-card-title-group">
+          <span className="ds-header-icon">
+            <Activity size={16} strokeWidth={2.2} />
+          </span>
+          <span>Renda mensal comprometida</span>
+        </div>
+        <ChevronDown size={18} className={`chevron ${isCollapsed ? 'rotate-180' : ''}`} />
       </div>
 
       {!isCollapsed && (
-        <div className="progress-body">
+        <div className="progress-body" style={{ padding: '16px 18px 18px' }}>
           <div className="progress-container">
             <svg className="progress-svg" viewBox="0 0 110 110">
               <circle
@@ -63,7 +71,7 @@ export function CircularProgress({
             <small>Total comprometido</small>
           </div>
           <div className="expected-profit-row">
-            <span>Lucro previsto:</span>
+            <span>Saldo previsto:</span>
             <strong className={expectedProfitRaw < 0 ? 'profit-negative' : 'profit-positive'}>
               {expectedProfit}
             </strong>

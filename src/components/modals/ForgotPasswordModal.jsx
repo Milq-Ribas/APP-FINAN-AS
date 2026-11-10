@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { X, Mail, CheckCircle2 } from 'lucide-react'
+import { ChevronLeft, CheckCircle2 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 
 export function ForgotPasswordModal({ onClose, initialEmail = '' }) {
@@ -36,63 +36,71 @@ export function ForgotPasswordModal({ onClose, initialEmail = '' }) {
 
   return (
     <div className="modal-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="modal-card">
-        <div className="modal-header">
-          <h2>Recuperar Senha</h2>
-          <button type="button" onClick={onClose} aria-label="Fechar" className="close-btn">
-            <X size={22} />
+      <div className="modal-card ref-modal-card">
+        <div className="ref-modal-banner">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Voltar"
+            className="ref-back-circle-btn"
+          >
+            <ChevronLeft size={20} strokeWidth={2.4} />
           </button>
+          <h2 className="ref-modal-banner-title">Recuperar Senha</h2>
+          <div style={{ width: '36px' }} />
         </div>
 
-        {success ? (
-          <div style={{ textAlign: 'center', padding: '16px 0' }}>
-            <CheckCircle2 size={44} style={{ color: 'var(--primary-color)', margin: '0 auto 12px' }} />
-            <h3 style={{ fontSize: '1.1rem', marginBottom: '8px' }}>E-mail enviado!</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.5' }}>
-              Enviamos um link de recuperação para <strong>{email}</strong>. Verifique sua caixa de entrada e spam.
-            </p>
-            <button
-              className="submit-button"
-              onClick={onClose}
-              style={{ marginTop: '20px' }}
-            >
-              Fechar
-            </button>
-          </div>
-        ) : (
-          <form onSubmit={handleResetPassword}>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px', lineHeight: '1.4' }}>
-              Digite seu e-mail cadastrado para receber instruções de recuperação de senha.
-            </p>
-
-            <div className="form-group">
-              <input
-                placeholder="Seu e-mail"
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                className="modern-input"
-                autoFocus
-              />
-            </div>
-
-            {errorMessage && (
-              <p className="message" style={{ color: 'var(--danger-color)', fontSize: '0.88rem', marginBottom: '12px' }}>
-                {errorMessage}
+        <div className="ref-modal-body">
+          {success ? (
+            <div style={{ textAlign: 'center', padding: '16px 0' }}>
+              <CheckCircle2 size={44} style={{ color: 'var(--primary-color)', margin: '0 auto 12px' }} />
+              <h3 style={{ fontSize: '1.1rem', marginBottom: '8px' }}>E-mail enviado!</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                Enviamos um link de recuperação para <strong>{email}</strong>. Verifique sua caixa de entrada e spam.
               </p>
-            )}
+              <button
+                type="button"
+                className="ref-white-submit-btn"
+                onClick={onClose}
+                style={{ marginTop: '18px' }}
+              >
+                Fechar
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleResetPassword} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0, lineHeight: '1.45' }}>
+                Digite seu e-mail cadastrado para receber instruções de recuperação de senha.
+              </p>
 
-            <button
-              type="submit"
-              className="submit-button"
-              disabled={loading}
-              style={{ marginTop: '8px' }}
-            >
-              {loading ? 'Enviando link...' : 'Enviar link de recuperação'}
-            </button>
-          </form>
-        )}
+              <div className="form-group">
+                <input
+                  placeholder="Seu e-mail"
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  className="modern-input"
+                  autoFocus
+                />
+              </div>
+
+              {errorMessage && (
+                <p className="message" style={{ color: 'var(--danger-color)', fontSize: '0.88rem', margin: 0 }}>
+                  {errorMessage}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                className="ref-white-submit-btn"
+                disabled={loading}
+              >
+                {loading ? 'Enviando link...' : 'Enviar link de recuperação'}
+              </button>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   )

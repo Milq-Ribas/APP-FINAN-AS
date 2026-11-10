@@ -19,14 +19,19 @@ export function TransactionItem({ item, onClick, onToggleStatus, isPrivate = fal
     >
       <div className="transaction-left">
         <div className={`tx-avatar-circle ${isIncome ? 'tx-income-circle' : 'tx-expense-circle'}`}>
-          {isIncome ? <ArrowDownLeft size={18} strokeWidth={2.4} /> : <ArrowUpRight size={18} strokeWidth={2.4} />}
+          {isIncome ? <ArrowDownLeft size={18} strokeWidth={2.3} /> : <ArrowUpRight size={18} strokeWidth={2.3} />}
         </div>
 
         <div className="transaction-info">
           <strong>{item.description}</strong>
           <span className="tx-meta-line">
-            {getCategoryIcon(item.category)} {item.category}
-            {installmentOrCategory !== item.category ? ` • ${installmentOrCategory}` : ''}
+            <span className="tx-cat-icon-inline">
+              {getCategoryIcon(item.category, { size: 13, strokeWidth: 2.2 })}
+            </span>
+            <span>
+              {item.category}
+              {installmentOrCategory !== item.category ? ` • ${installmentOrCategory}` : ''}
+            </span>
           </span>
           <small className="tx-sub-time">
             {showDate ? `${getDayLabel(item.due_date)} • ` : ''}
@@ -51,7 +56,7 @@ export function TransactionItem({ item, onClick, onToggleStatus, isPrivate = fal
           title={isPaid ? 'Marcar como a pagar/receber' : 'Marcar como pago/recebido'}
           aria-label={isPaid ? 'Marcar como pendente' : 'Marcar como concluído'}
         >
-          <Check size={14} />
+          <Check size={14} strokeWidth={2.6} />
         </button>
       </div>
     </article>

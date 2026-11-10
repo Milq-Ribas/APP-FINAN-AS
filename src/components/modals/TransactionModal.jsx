@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, ArrowUpRight, ArrowDownLeft, Clock, CheckCircle2 } from 'lucide-react'
 import { categoryOptions, getCategoryIcon } from '../../constants/categories'
 import { formatMoney, roundMoney } from '../../utils/formatters'
 
@@ -36,14 +36,14 @@ export function TransactionModal({
             aria-label="Voltar"
             className="ref-back-circle-btn"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={20} strokeWidth={2.4} />
           </button>
           <h2 className="ref-modal-banner-title">
             {isEditing
               ? 'Editar lançamento'
               : (isExpense ? 'Nova despesa' : 'Nova receita')}
           </h2>
-          <div style={{ width: '38px' }} />
+          <div style={{ width: '36px' }} />
         </div>
 
         <div className="ref-modal-body">
@@ -57,14 +57,16 @@ export function TransactionModal({
                   className={`ref-type-pill ${isExpense ? 'active-expense' : ''}`}
                   onClick={() => setForm({ ...form, type: 'expense' })}
                 >
-                  Despesa
+                  <ArrowUpRight size={14} strokeWidth={2.4} />
+                  <span>Despesa</span>
                 </button>
                 <button
                   type="button"
                   className={`ref-type-pill ${!isExpense ? 'active-income' : ''}`}
                   onClick={() => setForm({ ...form, type: 'income', installment_total: '1' })}
                 >
-                  Receita
+                  <ArrowDownLeft size={14} strokeWidth={2.4} />
+                  <span>Receita</span>
                 </button>
               </div>
             </div>
@@ -80,7 +82,7 @@ export function TransactionModal({
 
             <div className="ref-recipient-row">
               <div className="ref-category-avatar">
-                <span>{getCategoryIcon(form.category)}</span>
+                {getCategoryIcon(form.category, { size: 19, strokeWidth: 2.2 })}
               </div>
               <div className="ref-recipient-details">
                 <strong className="ref-cat-title">{form.category}</strong>
@@ -93,7 +95,7 @@ export function TransactionModal({
                 aria-label="Alterar categoria"
               >
                 {categoryOptions.map(cat => (
-                  <option key={cat.name} value={cat.name}>{cat.icon} {cat.name}</option>
+                  <option key={cat.name} value={cat.name}>{cat.name}</option>
                 ))}
               </select>
             </div>
@@ -143,14 +145,16 @@ export function TransactionModal({
                     className={`ref-status-btn ${form.status === 'pending' ? 'active-pending' : ''}`}
                     onClick={() => setForm({ ...form, status: 'pending' })}
                   >
-                    {isExpense ? 'A pagar' : 'A receber'}
+                    <Clock size={13} strokeWidth={2.3} />
+                    <span>{isExpense ? 'A pagar' : 'A receber'}</span>
                   </button>
                   <button
                     type="button"
                     className={`ref-status-btn ${form.status === 'paid' ? 'active-paid' : ''}`}
                     onClick={() => setForm({ ...form, status: 'paid' })}
                   >
-                    {isExpense ? 'Pago' : 'Recebido'}
+                    <CheckCircle2 size={13} strokeWidth={2.3} />
+                    <span>{isExpense ? 'Pago' : 'Recebido'}</span>
                   </button>
                 </div>
               </div>
@@ -170,9 +174,9 @@ export function TransactionModal({
                     })}
                     className="modern-select"
                   >
-                    <option value="none">🔁 Único / Parcelado</option>
-                    <option value="monthly">📅 Fixo Mensal</option>
-                    <option value="weekly">🗓 Semanal</option>
+                    <option value="none">Único / Parcelado</option>
+                    <option value="monthly">Fixo Mensal</option>
+                    <option value="weekly">Semanal</option>
                   </select>
 
                   {form.recurrence === 'none' ? (

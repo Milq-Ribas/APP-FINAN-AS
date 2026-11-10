@@ -721,7 +721,7 @@ export function App() {
                 </div>
                 <div className="ref-greeting-text">
                   <span>{getGreeting()}</span>
-                  <strong>{userName} 👋</strong>
+                  <strong>{userName}</strong>
                 </div>
               </div>
 
@@ -735,7 +735,7 @@ export function App() {
                   title="Notificações e Vencimentos"
                   aria-label="Notificações"
                 >
-                  <Bell size={19} />
+                  <Bell size={18} strokeWidth={2.2} />
                   {alerts.length > 0 && <span className="ref-notif-dot">{alerts.length}</span>}
                 </button>
               </div>
@@ -754,11 +754,11 @@ export function App() {
                   title={isPrivate ? 'Mostrar valores' : 'Ocultar valores'}
                   aria-label="Alternar privacidade de valores"
                 >
-                  {isPrivate ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {isPrivate ? <EyeOff size={18} strokeWidth={2.2} /> : <Eye size={18} strokeWidth={2.2} />}
                 </button>
               </div>
               <div className="ref-balance-sub-pill">
-                <TrendingUp size={13} />
+                <TrendingUp size={13} strokeWidth={2.2} />
                 <span>Saldo previsto no mês: <strong>{expectedBalanceText}</strong></span>
               </div>
             </div>
@@ -770,7 +770,9 @@ export function App() {
                 className="ref-hero-action-tile"
                 onClick={() => openCreateModal('expense')}
               >
-                <ArrowUpRight size={20} />
+                <span className="ref-action-icon-circle">
+                  <ArrowUpRight size={18} strokeWidth={2.3} />
+                </span>
                 <span>Despesa</span>
               </button>
 
@@ -779,7 +781,9 @@ export function App() {
                 className="ref-hero-action-tile"
                 onClick={() => openCreateModal('income')}
               >
-                <ArrowDownLeft size={20} />
+                <span className="ref-action-icon-circle">
+                  <ArrowDownLeft size={18} strokeWidth={2.3} />
+                </span>
                 <span>Receita</span>
               </button>
 
@@ -788,7 +792,9 @@ export function App() {
                 className="ref-hero-action-tile"
                 onClick={() => setView('transactions')}
               >
-                <ArrowUpDown size={19} />
+                <span className="ref-action-icon-circle">
+                  <ArrowUpDown size={17} strokeWidth={2.3} />
+                </span>
                 <span>Extrato</span>
               </button>
 
@@ -797,7 +803,9 @@ export function App() {
                 className="ref-hero-action-tile"
                 onClick={() => setIsProfileOpen(true)}
               >
-                <MoreHorizontal size={20} />
+                <span className="ref-action-icon-circle">
+                  <MoreHorizontal size={18} strokeWidth={2.3} />
+                </span>
                 <span>Mais</span>
               </button>
             </div>
