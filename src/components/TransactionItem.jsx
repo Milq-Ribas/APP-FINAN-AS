@@ -1,30 +1,45 @@
 import React from 'react'
-import { Check } from 'lucide-react'
+import { Check, ArrowUpRight, ArrowDownLeft } from 'lucide-react'
 import { getCategoryIcon } from '../constants/categories'
-import { formatMoney, getInstallmentsLabel, getTransactionState } from '../utils/formatters'
+import { getDayLabel } from '../utils/date'
+import { formatSignedMoney, getInstallmentsLabel, getTransactionState } from '../utils/formatters'
 
-export function TransactionItem({ item, onClick, onToggleStatus, isPrivate = false }) {
+export function TransactionItem({ item, onClick, onToggleStatus, isPrivate = false, showDate = false }) {
   const state = getTransactionState(item)
   const isPaid = item.status === 'paid'
+  const isIncome = item.type === 'income'
+  const installmentOrCategory = getInstallmentsLabel(item)
 
   return (
     <article
-      className={`transaction-item ${state.className}`}
+      className={`transaction-item ref-transaction-item ${state.className}`}
       onClick={onClick}
       tabIndex={0}
       role="button"
     >
-      <div className="transaction-info">
-        <strong>{item.description}</strong>
-        <span>
-          {getCategoryIcon(item.category)} {getInstallmentsLabel(item)}
-        </span>
+      <div className="transaction-left">
+        <div className={`tx-avatar-circle ${isIncome ? 'tx-income-circle' : 'tx-expense-circle'}`}>
+          {isIncome ? <ArrowDownLeft size={18} strokeWidth={2.4} /> : <ArrowUpRight size={18} strokeWidth={2.4} />}
+        </div>
+
+        <div className="transaction-info">
+          <strong>{item.description}</strong>
+          <span className="tx-meta-line">
+            {getCategoryIcon(item.category)} {item.category}
+            {installmentOrCategory !== item.category ? ` • ${installmentOrCategory}` : ''}
+          </span>
+          <small className="tx-sub-time">
+            {showDate ? `${getDayLabel(item.due_date)} • ` : ''}
+            <em className={`tx-status-inline ${state.className}`}>{state.label}</em>
+          </small>
+        </div>
       </div>
 
       <div className="transaction-right">
         <div className="transaction-value">
-          <strong>{formatMoney(item.amount, isPrivate)}</strong>
-          <span>{state.label}</span>
+          <strong className={isIncome ? 'tx-amount-income' : 'tx-amount-expense'}>
+            {formatSignedMoney(item.amount, item.type, isPrivate)}
+          </strong>
         </div>
         <button
           type="button"

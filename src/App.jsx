@@ -6,15 +6,14 @@ import {
   EyeOff,
   Search,
   ArrowUpRight,
-  ArrowDownRight,
-  Wallet,
+  ArrowDownLeft,
   TrendingUp,
   ArrowUpDown,
-  Filter,
-  CheckCircle2
+  CheckCircle2,
+  MoreHorizontal
 } from 'lucide-react'
-import { today, currentMonth, addDays, addWeeks, addMonths, getDayLabel } from './utils/date'
-import { formatMoney } from './utils/formatters'
+import { today, currentMonth, addDays, addWeeks, addMonths, getDayLabel, getGreeting } from './utils/date'
+import { formatMoney, roundMoney } from './utils/formatters'
 import { CHART_COLORS } from './constants/categories'
 import { MonthSelector } from './components/MonthSelector'
 import { BottomNav } from './components/BottomNav'
@@ -39,16 +38,8 @@ const initialForm = {
   status: 'pending',
   recurrence: 'none',
   repeat_count: '6',
-  installment_total: '1'
-}
-
-function InfoCard({ label, value }) {
-  return (
-    <article className="info-card">
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </article>
-  )
+  installment_total: '1',
+  installment_mode: 'installment'
 }
 
 export function App() {
@@ -240,11 +231,17 @@ export function App() {
   }
 
   function openCreateModal(type = 'expense') {
-    setForm({ ...initialForm, type })
+    setMessage('')
+    setForm({
+      ...initialForm,
+      type,
+      category: type === 'income' ? 'Salário' : 'Moradia'
+    })
     setIsModalOpen(true)
   }
 
   function openEditModal(transaction) {
+    setMessage('')
     setSelectedTransaction(null)
     setForm({
       id: transaction.id,
@@ -256,7 +253,8 @@ export function App() {
       status: transaction.status || 'pending',
       recurrence: 'none',
       repeat_count: '1',
-      installment_total: String(transaction.installment_total || 1)
+      installment_total: String(transaction.installment_total || 1),
+      installment_mode: 'installment'
     })
     setIsModalOpen(true)
   }
@@ -265,13 +263,19 @@ export function App() {
     event.preventDefault()
     setMessage('')
 
+    const numericAmount = roundMoney(form.amount)
+    if (numericAmount <= 0) {
+      setMessage('Informe um valor maior que zero.')
+      return
+    }
+
     try {
       if (form.id) {
         const { error } = await supabase
           .from('transactions')
           .update({
-            description: form.description,
-            amount: Number(form.amount),
+            description: form.description.trim(),
+            amount: numericAmount,
             type: form.type,
             category: form.category,
             due_date: form.due_date,
@@ -290,7 +294,7 @@ export function App() {
         return
       }
 
-      const isInstallment = Number(form.installment_total) > 1
+      const isInstallment = form.recurrence === 'none' && Number(form.installment_total) > 1
       let repeatCount = isInstallment
         ? Number(form.installment_total)
         : form.recurrence === 'none'
@@ -301,31 +305,46 @@ export function App() {
         repeatCount = 12
       }
 
-      const recurrenceGroupId = crypto.randomUUID()
+      const recurrenceGroupId = repeatCount > 1 ? crypto.randomUUID() : null
+
+      // Cálculo preciso do valor de cada parcela caso o usuário escolha dividir o valor total
+      const shouldDivideTotal = isInstallment && form.installment_mode === 'total'
+      const baseInstallmentAmount = shouldDivideTotal
+        ? Math.floor((numericAmount / repeatCount) * 100) / 100
+        : numericAmount
+      const remainderCents = shouldDivideTotal
+        ? roundMoney(numericAmount - baseInstallmentAmount * repeatCount)
+        : 0
 
       const rows = Array.from({ length: repeatCount }).map((_, index) => {
         let dueDate = form.due_date
 
         if (isInstallment || form.recurrence === 'monthly') {
           dueDate = addMonths(form.due_date, index)
-        }
-
-        if (!isInstallment && form.recurrence === 'weekly') {
+        } else if (form.recurrence === 'weekly') {
           dueDate = addWeeks(form.due_date, index)
         }
 
+        const rowAmount = index === 0
+          ? roundMoney(baseInstallmentAmount + remainderCents)
+          : roundMoney(baseInstallmentAmount)
+
+        // Apenas a primeira ocorrência (ou vencimentos até hoje) herda o status 'paid';
+        // parcelas/meses futuros começam como 'pending' para não distorcer os saldos futuros.
+        const rowStatus = index === 0 ? form.status : 'pending'
+
         return {
-          description: form.description,
-          amount: Number(form.amount),
+          description: form.description.trim(),
+          amount: rowAmount,
           type: form.type,
           category: form.category,
           person: 'Casal',
           due_date: dueDate,
-          status: form.status,
-          recurrence: (isInstallment || form.recurrence === 'weekly') ? 'none' : form.recurrence,
-          recurrence_group_id: repeatCount > 1 ? recurrenceGroupId : null,
+          status: rowStatus,
+          recurrence: isInstallment ? 'none' : form.recurrence,
+          recurrence_group_id: recurrenceGroupId,
           installment_current: isInstallment ? index + 1 : 1,
-          installment_total: isInstallment ? Number(form.installment_total) : 1,
+          installment_total: isInstallment ? repeatCount : 1,
           user_id: session.user.id
         }
       })
@@ -440,7 +459,6 @@ export function App() {
       .filter(item => typeFilter === 'all' || item.type === typeFilter)
       .filter(item => item.description.toLowerCase().includes(searchQuery.toLowerCase()))
 
-    // Ordenação personalizada
     result = [...result].sort((a, b) => {
       if (sortBy === 'date_desc') return b.due_date.localeCompare(a.due_date)
       if (sortBy === 'date_asc') return a.due_date.localeCompare(b.due_date)
@@ -452,6 +470,22 @@ export function App() {
 
     return result
   }, [monthTransactions, statusFilter, typeFilter, searchQuery, sortBy])
+
+  const filteredSummary = useMemo(() => {
+    const income = roundMoney(
+      filteredTransactions
+        .filter(t => t.type === 'income')
+        .reduce((sum, t) => sum + Number(t.amount), 0)
+    )
+    const expense = roundMoney(
+      filteredTransactions
+        .filter(t => t.type === 'expense')
+        .reduce((sum, t) => sum + Number(t.amount), 0)
+    )
+    const net = roundMoney(income - expense)
+    const isFiltering = statusFilter !== 'all' || typeFilter !== 'all' || searchQuery.trim() !== ''
+    return { income, expense, net, isFiltering }
+  }, [filteredTransactions, statusFilter, typeFilter, searchQuery])
 
   const exportToCSV = () => {
     const header = ['ID,Data,Descricao,Valor,Tipo,Categoria,Status\n']
@@ -471,10 +505,12 @@ export function App() {
   const expensesByCategory = useMemo(() => {
     const expenses = monthTransactions.filter(t => t.type === 'expense')
     const groups = expenses.reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + Number(t.amount)
+      acc[t.category] = roundMoney((acc[t.category] || 0) + Number(t.amount))
       return acc
     }, {})
-    return Object.entries(groups).map(([name, value]) => ({ name, value }))
+    return Object.entries(groups)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
   }, [monthTransactions])
 
   const groupedTransactions = useMemo(() => {
@@ -486,44 +522,65 @@ export function App() {
     }, {})
   }, [filteredTransactions])
 
+  const recentMonthTransactions = useMemo(() => {
+    return [...monthTransactions]
+      .sort((a, b) => b.due_date.localeCompare(a.due_date))
+      .slice(0, 5)
+  }, [monthTransactions])
+
   const summary = useMemo(() => {
-    const receivedIncome = monthTransactions
-      .filter(item => item.type === 'income' && item.status === 'paid')
-      .reduce((sum, item) => sum + Number(item.amount), 0)
+    const receivedIncome = roundMoney(
+      monthTransactions
+        .filter(item => item.type === 'income' && item.status === 'paid')
+        .reduce((sum, item) => sum + Number(item.amount), 0)
+    )
 
-    const allExpenses = monthTransactions
-      .filter(item => item.type === 'expense')
-      .reduce((sum, item) => sum + Number(item.amount), 0)
+    const pendingIncome = roundMoney(
+      monthTransactions
+        .filter(item => item.type === 'income' && item.status === 'pending')
+        .reduce((sum, item) => sum + Number(item.amount), 0)
+    )
 
-    const paidExpenses = monthTransactions
-      .filter(item => item.type === 'expense' && item.status === 'paid')
-      .reduce((sum, item) => sum + Number(item.amount), 0)
+    const paidExpenses = roundMoney(
+      monthTransactions
+        .filter(item => item.type === 'expense' && item.status === 'paid')
+        .reduce((sum, item) => sum + Number(item.amount), 0)
+    )
 
-    const pendingExpenses = monthTransactions
-      .filter(item => item.type === 'expense' && item.status === 'pending')
-      .reduce((sum, item) => sum + Number(item.amount), 0)
+    const pendingExpenses = roundMoney(
+      monthTransactions
+        .filter(item => item.type === 'expense' && item.status === 'pending')
+        .reduce((sum, item) => sum + Number(item.amount), 0)
+    )
 
-    const pendingIncome = monthTransactions
-      .filter(item => item.type === 'income' && item.status === 'pending')
-      .reduce((sum, item) => sum + Number(item.amount), 0)
+    const totalIncome = roundMoney(receivedIncome + pendingIncome)
+    const allExpenses = roundMoney(paidExpenses + pendingExpenses)
+    const accountBalance = roundMoney(receivedIncome - paidExpenses)
+    const expectedBalance = roundMoney(totalIncome - allExpenses)
 
-    const totalIncome = receivedIncome + pendingIncome
-    const committedPercentage = totalIncome > 0 ? Math.round((allExpenses / totalIncome) * 100) : 0
+    const committedPercentage = totalIncome > 0
+      ? Math.round((allExpenses / totalIncome) * 100)
+      : (allExpenses > 0 ? 100 : 0)
 
     return {
       receivedIncome,
-      allExpenses,
-      paidExpenses,
-      pendingExpenses,
       pendingIncome,
       totalIncome,
+      paidExpenses,
+      pendingExpenses,
+      allExpenses,
       committedPercentage,
-      accountBalance: receivedIncome - paidExpenses,
-      expectedBalance: receivedIncome + pendingIncome - paidExpenses - pendingExpenses
+      accountBalance,
+      expectedBalance
     }
   }, [monthTransactions])
 
   const expectedBalanceText = formatMoney(summary.expectedBalance, isPrivate)
+  const userName = useMemo(() => {
+    if (!session?.user?.email) return 'Minha Conta'
+    const raw = session.user.email.split('@')[0].replace(/[._-]+/g, ' ')
+    return raw.replace(/\b\w/g, l => l.toUpperCase())
+  }, [session])
 
   if (loading) {
     return <main className="app-mobile loading-screen">Carregando Finanças...</main>
@@ -544,11 +601,11 @@ export function App() {
               style={{
                 flex: 1,
                 padding: '10px',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 border: 'none',
-                background: authMode === 'login' ? 'var(--primary-color, #17b5a2)' : 'rgba(255, 255, 255, 0.05)',
-                color: '#fff',
-                fontWeight: '600',
+                background: authMode === 'login' ? 'var(--primary-color, #10b981)' : 'rgba(255, 255, 255, 0.05)',
+                color: authMode === 'login' ? '#042f2e' : '#fff',
+                fontWeight: '700',
                 cursor: 'pointer'
               }}
             >
@@ -561,11 +618,11 @@ export function App() {
               style={{
                 flex: 1,
                 padding: '10px',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 border: 'none',
-                background: authMode === 'register' ? 'var(--primary-color, #17b5a2)' : 'rgba(255, 255, 255, 0.05)',
-                color: '#fff',
-                fontWeight: '600',
+                background: authMode === 'register' ? 'var(--primary-color, #10b981)' : 'rgba(255, 255, 255, 0.05)',
+                color: authMode === 'register' ? '#042f2e' : '#fff',
+                fontWeight: '700',
                 cursor: 'pointer'
               }}
             >
@@ -618,11 +675,11 @@ export function App() {
           )}
 
           {authMode === 'login' ? (
-            <button onClick={signIn} disabled={authLoading} className="submit-button" style={{ marginTop: '14px' }}>
+            <button onClick={signIn} disabled={authLoading} className="ref-white-submit-btn" style={{ marginTop: '14px' }}>
               {authLoading ? 'Entrando...' : 'Entrar'}
             </button>
           ) : (
-            <button onClick={signUp} disabled={authLoading} className="submit-button" style={{ marginTop: '14px' }}>
+            <button onClick={signUp} disabled={authLoading} className="ref-white-submit-btn" style={{ marginTop: '14px' }}>
               {authLoading ? 'Cadastrando...' : 'Criar Conta'}
             </button>
           )}
@@ -655,34 +712,96 @@ export function App() {
     <main className="app-mobile dark-bg">
       {view === 'home' && (
         <section className="page home-page">
-          <header className="home-header">
-            <div className="home-header-text">
-              <img src="/logo.png" alt="FINANCE" className="header-logo" />
-              <p>Seja bem-vindo</p>
+          {/* HERO CARD VERDE (Inspirado na Referência) */}
+          <section className="ref-hero-wallet-card">
+            <header className="ref-hero-topbar">
+              <div className="ref-user-greeting" onClick={() => setIsProfileOpen(true)} role="button" tabIndex={0}>
+                <div className="ref-avatar-wrapper">
+                  <img src="/logo.png" alt="FINANCE" className="ref-avatar-img" />
+                </div>
+                <div className="ref-greeting-text">
+                  <span>{getGreeting()}</span>
+                  <strong>{userName} 👋</strong>
+                </div>
+              </div>
+
+              <div className="ref-hero-top-actions">
+                <MonthSelector value={monthFilter} onChange={setMonthFilter} compact />
+
+                <button
+                  type="button"
+                  className="ref-circle-glass-btn"
+                  onClick={() => setIsNotificationsOpen(true)}
+                  title="Notificações e Vencimentos"
+                  aria-label="Notificações"
+                >
+                  <Bell size={19} />
+                  {alerts.length > 0 && <span className="ref-notif-dot">{alerts.length}</span>}
+                </button>
+              </div>
+            </header>
+
+            <div className="ref-wallet-balance-block">
+              <span className="ref-balance-caption">Saldo em Conta (Realizado)</span>
+              <div className="ref-balance-value-row">
+                <strong className="ref-hero-balance-number">
+                  {formatMoney(summary.accountBalance, isPrivate)}
+                </strong>
+                <button
+                  type="button"
+                  className="ref-inline-eye-btn"
+                  onClick={() => setIsPrivate(prev => !prev)}
+                  title={isPrivate ? 'Mostrar valores' : 'Ocultar valores'}
+                  aria-label="Alternar privacidade de valores"
+                >
+                  {isPrivate ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              <div className="ref-balance-sub-pill">
+                <TrendingUp size={13} />
+                <span>Saldo previsto no mês: <strong>{expectedBalanceText}</strong></span>
+              </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {/* Botão de Modo Privacidade no Topo */}
+            {/* 4 Botões Translúcidos de Ação Rápida dentro do Hero Card */}
+            <div className="ref-hero-actions-grid">
               <button
-                className="notification-btn privacy-toggle-btn"
-                onClick={() => setIsPrivate(prev => !prev)}
-                title={isPrivate ? 'Mostrar valores' : 'Ocultar valores'}
-                aria-label="Alternar privacidade de valores"
+                type="button"
+                className="ref-hero-action-tile"
+                onClick={() => openCreateModal('expense')}
               >
-                {isPrivate ? <EyeOff size={22} /> : <Eye size={22} />}
+                <ArrowUpRight size={20} />
+                <span>Despesa</span>
               </button>
 
               <button
-                className="notification-btn"
-                onClick={() => setIsNotificationsOpen(true)}
-                title="Notificações e Vencimentos"
-                aria-label="Notificações"
+                type="button"
+                className="ref-hero-action-tile"
+                onClick={() => openCreateModal('income')}
               >
-                <Bell size={22} />
-                {alerts.length > 0 && <span className="badge">{alerts.length}</span>}
+                <ArrowDownLeft size={20} />
+                <span>Receita</span>
+              </button>
+
+              <button
+                type="button"
+                className="ref-hero-action-tile"
+                onClick={() => setView('transactions')}
+              >
+                <ArrowUpDown size={19} />
+                <span>Extrato</span>
+              </button>
+
+              <button
+                type="button"
+                className="ref-hero-action-tile"
+                onClick={() => setIsProfileOpen(true)}
+              >
+                <MoreHorizontal size={20} />
+                <span>Mais</span>
               </button>
             </div>
-          </header>
+          </section>
 
           {alerts.length > 0 && (
             <div className="urgent-alert-banner" onClick={() => setIsNotificationsOpen(true)}>
@@ -692,65 +811,94 @@ export function App() {
                 </div>
                 <div className="urgent-alert-text">
                   <strong>{alerts.length} conta{alerts.length > 1 ? 's' : ''} para atenção</strong>
-                  <span>Vencendo hoje ou atrasada</span>
+                  <span>Vencendo hoje, amanhã ou em atraso</span>
                 </div>
               </div>
               <span className="urgent-action-tag">Resolver</span>
             </div>
           )}
 
-          <section className="balance-card modern-balance-card">
-            <div className="balance-top-row">
-              <div className="wallet-badge">
-                <Wallet size={15} />
-                <span>SALDO EM CONTA</span>
+          {/* CARD RESUMO DO MÊS (Contas 100% Consistentes: Realizado + Pendente = Total) */}
+          <section className="ref-summary-banner-card">
+            <div className="ref-summary-header">
+              <div>
+                <span className="ref-summary-kicker">Balanço Mensal</span>
+                <h3>Resumo de Contas</h3>
               </div>
-              <MonthSelector value={monthFilter} onChange={setMonthFilter} compact />
+              <span className={`ref-net-pill ${summary.expectedBalance < 0 ? 'is-neg' : 'is-pos'}`}>
+                Previsto: {expectedBalanceText}
+              </span>
             </div>
 
-            <div className="balance-hero">
-              <strong className="main-balance hero-balance">
-                {formatMoney(summary.accountBalance, isPrivate)}
-              </strong>
-            </div>
-
-            <div className="balance-metrics-stack">
-              <div className="metric-row-full income-row">
-                <div className="metric-info-group">
-                  <div className="tile-icon-wrapper income-badge">
-                    <ArrowUpRight size={18} />
-                  </div>
-                  <span className="metric-label">RECEBIDAS</span>
+            <div className="ref-summary-columns">
+              <div className="ref-summary-box income-box">
+                <div className="ref-summary-box-top">
+                  <span className="ref-dot income-dot" />
+                  <span className="ref-box-title">Receitas</span>
                 </div>
-                <strong className="metric-value income-value">
-                  {formatMoney(summary.receivedIncome, isPrivate)}
+                <strong className="ref-box-main income-text">
+                  {formatMoney(summary.totalIncome, isPrivate)}
                 </strong>
+                <div className="ref-box-breakdown">
+                  <span>Recebido: <b>{formatMoney(summary.receivedIncome, isPrivate)}</b></span>
+                  <span>A receber: <b>{formatMoney(summary.pendingIncome, isPrivate)}</b></span>
+                </div>
               </div>
 
-              <div className="metric-row-full expense-row">
-                <div className="metric-info-group">
-                  <div className="tile-icon-wrapper expense-badge">
-                    <ArrowDownRight size={18} />
-                  </div>
-                  <span className="metric-label">DESPESAS</span>
+              <div className="ref-summary-box expense-box">
+                <div className="ref-summary-box-top">
+                  <span className="ref-dot expense-dot" />
+                  <span className="ref-box-title">Despesas</span>
                 </div>
-                <strong className="metric-value expense-value">
+                <strong className="ref-box-main expense-text">
                   {formatMoney(summary.allExpenses, isPrivate)}
                 </strong>
-              </div>
-
-              <div className="metric-row-full forecast-row">
-                <div className="metric-info-group">
-                  <div className="tile-icon-wrapper forecast-badge">
-                    <TrendingUp size={18} />
-                  </div>
-                  <span className="metric-label">SALDO PREVISTO</span>
+                <div className="ref-box-breakdown">
+                  <span>Pago: <b>{formatMoney(summary.paidExpenses, isPrivate)}</b></span>
+                  <span>A pagar: <b>{formatMoney(summary.pendingExpenses, isPrivate)}</b></span>
                 </div>
-                <strong className={`metric-value ${summary.expectedBalance < 0 ? 'expense-value' : 'income-value'}`}>
-                  {expectedBalanceText}
-                </strong>
               </div>
             </div>
+          </section>
+
+          {/* LISTA DE TRANSAÇÕES RECENTES NA HOME (Estilo "Transactions / View all" da referência) */}
+          <section className="ref-home-tx-section">
+            <div className="ref-section-title-row">
+              <h3>Transações</h3>
+              <button
+                type="button"
+                className="ref-view-all-btn"
+                onClick={() => setView('transactions')}
+              >
+                Ver tudo
+              </button>
+            </div>
+
+            {recentMonthTransactions.length === 0 ? (
+              <div className="ref-empty-inline">
+                <p>Nenhum lançamento neste mês.</p>
+                <button
+                  type="button"
+                  className="ref-pill-cta"
+                  onClick={() => openCreateModal('expense')}
+                >
+                  + Adicionar lançamento
+                </button>
+              </div>
+            ) : (
+              <div className="ref-tx-feed">
+                {recentMonthTransactions.map(item => (
+                  <TransactionItem
+                    key={item.id}
+                    item={item}
+                    onClick={() => setSelectedTransaction(item)}
+                    onToggleStatus={updateTransactionStatus}
+                    isPrivate={isPrivate}
+                    showDate
+                  />
+                ))}
+              </div>
+            )}
           </section>
 
           <CircularProgress
@@ -767,16 +915,13 @@ export function App() {
             CHART_COLORS={CHART_COLORS}
             isPrivate={isPrivate}
           />
-
-          <InfoCard label="A receber:" value={formatMoney(summary.pendingIncome, isPrivate)} />
-          <InfoCard label="A pagar:" value={formatMoney(summary.pendingExpenses, isPrivate)} />
         </section>
       )}
 
       {view === 'transactions' && (
         <section className="page transactions-page">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h2 style={{ margin: 0 }}>Transações</h2>
+          <div className="ref-tx-page-header">
+            <h2>Extrato de Transações</h2>
             <button
               className="notification-btn privacy-toggle-btn"
               onClick={() => setIsPrivate(prev => !prev)}
@@ -816,7 +961,7 @@ export function App() {
             </div>
 
             {/* Linha de Ordenação */}
-            <div className="sort-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+            <div className="sort-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
               <ArrowUpDown size={15} style={{ color: 'var(--text-muted)' }} />
               <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Ordenar:</span>
               <select
@@ -833,11 +978,32 @@ export function App() {
               </select>
             </div>
 
+            {/* Resumo Dinâmico: mostra o Saldo Previsto do mês e, quando filtrado, o total exato do filtro */}
             <div className="forecast-row">
               <div className="forecast-card-clean">
-                <span className="forecast-label-simple">Lucro Previsto</span>
-                <strong className={`forecast-value-simple ${summary.expectedBalance < 0 ? 'negative' : 'positive'}`}>
-                  {expectedBalanceText}
+                <div>
+                  <span className="forecast-label-simple">
+                    {filteredSummary.isFiltering ? 'Resultado do Filtro' : 'Saldo Previsto do Mês'}
+                  </span>
+                  {filteredSummary.isFiltering && (
+                    <small style={{ display: 'block', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                      {filteredTransactions.length} lançamento{filteredTransactions.length !== 1 ? 's' : ''}
+                    </small>
+                  )}
+                </div>
+                <strong
+                  className={`forecast-value-simple ${
+                    (filteredSummary.isFiltering ? filteredSummary.net : summary.expectedBalance) < 0
+                      ? 'negative'
+                      : 'positive'
+                  }`}
+                >
+                  {formatMoney(
+                    filteredSummary.isFiltering
+                      ? (typeFilter === 'expense' ? filteredSummary.expense : typeFilter === 'income' ? filteredSummary.income : filteredSummary.net)
+                      : summary.expectedBalance,
+                    isPrivate
+                  )}
                 </strong>
               </div>
             </div>
@@ -856,7 +1022,7 @@ export function App() {
                     Nenhum lançamento encontrado
                   </strong>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>
-                    {searchQuery ? 'Tente buscar com outro termo ou limpe o filtro.' : 'Clique no botão "+" abaixo para adicionar seu primeiro lançamento.'}
+                    {searchQuery ? 'Tente buscar com outro termo ou limpe o filtro.' : 'Toque no botão "+" abaixo para adicionar seu primeiro lançamento.'}
                   </p>
                 </div>
               ) : (
@@ -897,6 +1063,8 @@ export function App() {
           onSubmit={saveTransaction}
           onClose={() => setIsModalOpen(false)}
           message={message}
+          currentBalance={summary.accountBalance}
+          isPrivate={isPrivate}
         />
       )}
 

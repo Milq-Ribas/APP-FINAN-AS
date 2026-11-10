@@ -2485,6 +2485,951 @@ button:active {
   color: var(--danger-color) !important;
 }
 
+/* ==========================================================================
+   VISUAL REDESIGN INSPIRADO NA REFERÊNCIA (TEMA VERDE ESMERALDA / DARK)
+   ========================================================================== */
+
+:root {
+  --bg-color: #090a0f;
+  --surface-color: #13151c;
+  --surface-color-light: #1a1d26;
+  --primary-color: #10b981;
+  --primary-light: #34d399;
+  --primary-dark: #065f46;
+}
+
+.dark-bg {
+  background: #090a0f;
+}
+
+.home-page {
+  padding-top: 16px;
+}
+
+/* ── 1. Hero Wallet Card (Verde Gradiente estilo Referência) ────────────── */
+.ref-hero-wallet-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 32px;
+  padding: 22px 20px 20px;
+  margin-bottom: 18px;
+  background:
+    radial-gradient(circle at 82% 14%, rgba(167, 243, 208, 0.42) 0%, transparent 52%),
+    radial-gradient(circle at 12% 88%, rgba(5, 150, 105, 0.55) 0%, transparent 55%),
+    linear-gradient(145deg, #34d399 0%, #10b981 42%, #059669 78%, #064e3b 100%);
+  box-shadow:
+    0 20px 44px rgba(0, 0, 0, 0.55),
+    0 6px 24px rgba(16, 185, 129, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+
+.ref-hero-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.ref-user-greeting {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.ref-avatar-wrapper {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(9, 10, 15, 0.28);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.ref-avatar-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.ref-greeting-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ref-greeting-text span {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.2;
+}
+
+.ref-greeting-text strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ref-hero-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Estiliza o MonthSelector dentro do Hero Card verde */
+.ref-hero-top-actions .month-selector.compact {
+  height: 38px;
+  padding: 0 13px;
+  background: rgba(9, 10, 15, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ref-hero-top-actions .month-selector .chevron {
+  color: #ffffff;
+}
+
+.ref-circle-glass-btn {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(9, 10, 15, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+}
+
+.ref-circle-glass-btn:hover {
+  background: rgba(9, 10, 15, 0.36);
+}
+
+.ref-notif-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #059669;
+}
+
+/* Bloco do Saldo Principal */
+.ref-wallet-balance-block {
+  margin-bottom: 20px;
+}
+
+.ref-balance-caption {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 4px;
+}
+
+.ref-balance-value-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ref-hero-balance-number {
+  font-size: clamp(32px, 8.5vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+  color: #ffffff;
+}
+
+.ref-inline-eye-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ref-inline-eye-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+
+.ref-balance-sub-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: rgba(9, 10, 15, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.ref-balance-sub-pill strong {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+/* 4 Botões Translúcidos dentro do Hero Card */
+.ref-hero-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.ref-hero-action-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 13px 6px;
+  border-radius: 20px;
+  background: rgba(9, 10, 15, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.ref-hero-action-tile:hover {
+  background: rgba(9, 10, 15, 0.34);
+  transform: translateY(-2px);
+}
+
+/* ── 2. Card de Balanço Mensal Consistente ──────────────────────────────── */
+.ref-summary-banner-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  padding: 18px;
+  margin-bottom: 18px;
+  background:
+    radial-gradient(circle at 95% 15%, rgba(16, 185, 129, 0.16), transparent 55%),
+    #13151c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.ref-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.ref-summary-kicker {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--primary-light);
+}
+
+.ref-summary-header h3 {
+  margin: 2px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ref-net-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ref-net-pill.is-pos {
+  background: rgba(16, 185, 129, 0.14);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.28);
+}
+
+.ref-net-pill.is-neg {
+  background: rgba(239, 68, 68, 0.14);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+}
+
+.ref-summary-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ref-summary-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 13px;
+}
+
+.ref-summary-box-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 6px;
+}
+
+.ref-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.income-dot {
+  background: #34d399;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+}
+
+.expense-dot {
+  background: #f87171;
+  box-shadow: 0 0 8px rgba(248, 113, 113, 0.6);
+}
+
+.ref-box-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.ref-box-main {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.income-text {
+  color: #34d399;
+}
+
+.expense-text {
+  color: #f87171;
+}
+
+.ref-box-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ref-box-breakdown b {
+  color: #e5e7eb;
+  font-weight: 700;
+}
+
+/* ── 3. Seção de Transações na Home & Item Estilo Referência ────────────── */
+.ref-home-tx-section {
+  background: #13151c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 28px;
+  padding: 18px 16px;
+  margin-bottom: 16px;
+}
+
+.ref-section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.ref-section-title-row h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ref-view-all-btn {
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.ref-view-all-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ref-tx-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ref-empty-inline {
+  text-align: center;
+  padding: 20px 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.ref-pill-cta {
+  margin-top: 8px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #090a0f;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Item de Transação Estilo Referência */
+.ref-transaction-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left-width: 1px !important;
+}
+
+.ref-transaction-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.transaction-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.tx-avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.tx-income-circle {
+  background: rgba(16, 185, 129, 0.14);
+  color: #34d399;
+}
+
+.tx-expense-circle {
+  background: rgba(255, 255, 255, 0.06);
+  color: #34d399;
+}
+
+.ref-transaction-item.overdue .tx-expense-circle {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.tx-meta-line {
+  font-size: 12px !important;
+  color: #8e95a5 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tx-sub-time {
+  display: block;
+  font-size: 11px;
+  color: #687082;
+  margin-top: 2px;
+}
+
+.tx-status-inline {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.tx-status-inline.overdue {
+  color: #fbbf24;
+}
+
+.tx-status-inline.income-paid,
+.tx-status-inline.income-pending {
+  color: #34d399;
+}
+
+.tx-status-inline.expense-pending {
+  color: #f87171;
+}
+
+.tx-amount-income {
+  color: #34d399 !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+}
+
+.tx-amount-expense {
+  color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+}
+
+.ref-transaction-item.paid .tx-amount-expense {
+  color: #9ca3af !important;
+}
+
+.ref-tx-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.ref-tx-page-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+/* ── 4. Floating Pill Bottom Navigation (Igual à Referência) ────────────── */
+.bottom-nav-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 30;
+  padding: 0 16px;
+}
+
+.bottom-nav.ref-floating-dock {
+  position: static;
+  transform: none;
+  pointer-events: auto;
+  width: auto;
+  min-width: 280px;
+  max-width: 380px;
+  height: 64px;
+  padding: 8px;
+  border-radius: 999px;
+  background: rgba(24, 27, 36, 0.88);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bottom-nav.ref-floating-dock .dock-item {
+  height: 48px;
+  min-width: 48px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #9ca3af;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bottom-nav.ref-floating-dock .dock-item:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+.bottom-nav.ref-floating-dock .dock-item.active {
+  background: #ffffff;
+  color: #090a0f;
+  padding: 0 20px;
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+}
+
+.bottom-nav.ref-floating-dock .dock-item.active .dock-icon {
+  color: #059669;
+}
+
+.bottom-nav.ref-floating-dock .dock-add-btn {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.bottom-nav.ref-floating-dock .dock-add-btn:hover {
+  background: #10b981;
+  color: #090a0f;
+}
+
+/* ── 5. Modal de Transação Estilo "Send Money" da Referência ────────────── */
+.ref-modal-card {
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #0d0f14 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 32px !important;
+  gap: 0 !important;
+}
+
+.ref-modal-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 22px;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(167, 243, 208, 0.38), transparent 55%),
+    linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%);
+  color: #ffffff;
+}
+
+.ref-back-circle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(9, 10, 15, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+}
+
+.ref-back-circle-btn:hover {
+  background: rgba(9, 10, 15, 0.4);
+}
+
+.ref-modal-banner-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ref-modal-body {
+  padding: 18px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: calc(88vh - 80px);
+  overflow-y: auto;
+}
+
+.ref-recipient-card {
+  background: #161821;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 22px;
+  padding: 14px;
+}
+
+.ref-recipient-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.ref-recipient-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.ref-type-pills {
+  display: flex;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 3px;
+  border-radius: 999px;
+}
+
+.ref-type-pill {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: transparent;
+  color: #9ca3af;
+}
+
+.ref-type-pill.active-expense {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.ref-type-pill.active-income {
+  background: #10b981;
+  color: #052e16;
+}
+
+.ref-recipient-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ref-category-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.ref-recipient-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.ref-clean-desc-input {
+  padding: 4px 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+
+.ref-clean-desc-input::placeholder {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.ref-recipient-sub {
+  display: block;
+  font-size: 12px;
+  color: #8e95a5;
+}
+
+.ref-change-pill-select {
+  width: auto !important;
+  max-width: 125px;
+  padding: 7px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+}
+
+/* Display Centralizado do Valor (Estilo "2.300 USD" da referência) */
+.ref-amount-hero-section {
+  text-align: center;
+  padding: 6px 0;
+}
+
+.ref-amount-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ref-hero-amount-input {
+  width: 180px !important;
+  text-align: right;
+  padding: 4px !important;
+  border: none !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  font-size: 38px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em;
+  box-shadow: none !important;
+}
+
+.ref-hero-amount-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.ref-currency-tag {
+  font-size: 18px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.ref-balance-hint {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #8e95a5;
+}
+
+.ref-balance-hint .hint-pos {
+  color: #34d399;
+}
+
+.ref-balance-hint .hint-neg {
+  color: #f87171;
+}
+
+.ref-config-panel {
+  background: #161821;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 22px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ref-status-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 4px;
+  border-radius: 14px;
+  height: 46px;
+}
+
+.ref-status-btn {
+  border-radius: 10px;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ref-status-btn.active-pending {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.ref-status-btn.active-paid {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.installment-helper-box {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.installment-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 3px;
+  border-radius: 10px;
+}
+
+.installment-mode-switch button {
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  background: transparent;
+  color: #9ca3af;
+}
+
+.installment-mode-switch button.active {
+  background: #10b981;
+  color: #052e16;
+}
+
+.installment-preview-text {
+  font-size: 12px;
+  color: #d1fae5;
+  text-align: center;
+}
+
+/* Botão Branco Pílula (Estilo "Send" e "Get Card" da Referência) */
+.ref-white-submit-btn {
+  width: 100%;
+  min-height: 54px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #090a0f;
+  font-size: 16px;
+  font-weight: 800;
+  border: none;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.14);
+  transition: all 0.2s ease;
+}
+
+.ref-white-submit-btn:hover {
+  background: #ecfdf5;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(52, 211, 153, 0.25);
+}
+
+@media (min-width: 1024px) {
+  .ref-hero-wallet-card,
+  .ref-summary-banner-card,
+  .ref-home-tx-section,
+  .urgent-alert-banner {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+}
+
+
 
 
 

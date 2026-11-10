@@ -1,47 +1,50 @@
 import React from 'react'
-import { BarChart3, ReceiptText, Plus, UserCircle, LogOut } from 'lucide-react'
+import { Home, ArrowUpDown, Plus, User } from 'lucide-react'
 
-export function BottomNav({ activeView, setView, openAdd, openProfile, signOut }) {
+export function BottomNav({ activeView, setView, openAdd, openProfile }) {
   return (
-    <nav className="bottom-nav">
-      <button
-        className={activeView === 'home' ? 'active' : ''}
-        onClick={() => setView('home')}
-        aria-label="Painel Resumo"
-      >
-        <BarChart3 size={26} strokeWidth={2.4} />
-      </button>
+    <div className="bottom-nav-wrapper">
+      <nav className="bottom-nav ref-floating-dock" aria-label="Navegação principal">
+        <button
+          type="button"
+          className={`dock-item ${activeView === 'home' ? 'active' : ''}`}
+          onClick={() => setView('home')}
+          aria-label="Início"
+        >
+          <Home size={20} strokeWidth={2.5} className="dock-icon" />
+          {activeView === 'home' && <span className="dock-label">Início</span>}
+        </button>
 
-      <button
-        className={activeView === 'transactions' ? 'active' : ''}
-        onClick={() => setView('transactions')}
-        aria-label="Lista de Transações"
-      >
-        <ReceiptText size={26} strokeWidth={2.4} />
-      </button>
+        <button
+          type="button"
+          className={`dock-item ${activeView === 'transactions' ? 'active' : ''}`}
+          onClick={() => setView('transactions')}
+          aria-label="Extrato de Transações"
+        >
+          <ArrowUpDown size={20} strokeWidth={2.5} className="dock-icon" />
+          {activeView === 'transactions' && <span className="dock-label">Extrato</span>}
+        </button>
 
-      <button
-        className="add-button"
-        onClick={() => openAdd('expense')}
-        aria-label="Adicionar lançamento"
-      >
-        <Plus size={36} strokeWidth={3} />
-      </button>
+        <button
+          type="button"
+          className="dock-item dock-add-btn"
+          onClick={() => openAdd('expense')}
+          aria-label="Novo lançamento"
+          title="Novo lançamento"
+        >
+          <Plus size={22} strokeWidth={2.8} />
+        </button>
 
-      <button
-        onClick={openProfile}
-        aria-label="Meu Perfil e Configurações"
-      >
-        <UserCircle size={26} strokeWidth={2.4} />
-      </button>
-
-      <button
-        onClick={signOut}
-        aria-label="Encerrar sessão"
-        className="nav-logout-btn"
-      >
-        <LogOut size={26} strokeWidth={2.4} />
-      </button>
-    </nav>
+        <button
+          type="button"
+          className="dock-item"
+          onClick={openProfile}
+          aria-label="Meu Perfil e Configurações"
+          title="Perfil"
+        >
+          <User size={20} strokeWidth={2.4} />
+        </button>
+      </nav>
+    </div>
   )
 }
