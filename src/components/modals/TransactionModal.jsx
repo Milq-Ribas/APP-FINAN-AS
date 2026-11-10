@@ -29,7 +29,7 @@ export function TransactionModal({
   return (
     <div className="modal-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <form className="modal-card ref-modal-card" onSubmit={onSubmit}>
-        <div className="ref-modal-banner">
+        <div className={`ref-modal-banner ${isExpense ? 'banner-expense' : 'banner-income'}`}>
           <button
             type="button"
             onClick={onClose}
@@ -47,65 +47,31 @@ export function TransactionModal({
         </div>
 
         <div className="ref-modal-body">
-          {/* Card de Identificação e Categoria */}
-          <div className="ref-recipient-card">
-            <div className="ref-recipient-top">
-              <span className="ref-recipient-label">Tipo de lançamento</span>
-              <div className="ref-type-pills">
-                <button
-                  type="button"
-                  className={`ref-type-pill ${isExpense ? 'active-expense' : ''}`}
-                  onClick={() => setForm({ ...form, type: 'expense' })}
-                >
-                  <ArrowUpRight size={14} strokeWidth={2.4} />
-                  <span>Despesa</span>
-                </button>
-                <button
-                  type="button"
-                  className={`ref-type-pill ${!isExpense ? 'active-income' : ''}`}
-                  onClick={() => setForm({ ...form, type: 'income', installment_total: '1' })}
-                >
-                  <ArrowDownLeft size={14} strokeWidth={2.4} />
-                  <span>Receita</span>
-                </button>
-              </div>
-            </div>
-
-            <input
-              placeholder={isExpense ? 'Descrição (ex: Aluguel, Mercado...)' : 'Descrição (ex: Salário, Freela...)'}
-              value={form.description}
-              onChange={e => setForm({ ...form, description: e.target.value })}
-              required
-              className="modern-input ref-desc-field"
-              autoFocus
-            />
-
-            <div className="ref-recipient-row">
-              <div className="ref-category-avatar">
-                {getCategoryIcon(form.category, { size: 19, strokeWidth: 2.2 })}
-              </div>
-              <div className="ref-recipient-details">
-                <strong className="ref-cat-title">{form.category}</strong>
-                <span className="ref-recipient-sub">Categoria selecionada</span>
-              </div>
-              <select
-                value={form.category}
-                onChange={e => setForm({ ...form, category: e.target.value })}
-                className="ref-change-pill-select"
-                aria-label="Alterar categoria"
-              >
-                {categoryOptions.map(cat => (
-                  <option key={cat.name} value={cat.name}>{cat.name}</option>
-                ))}
-              </select>
-            </div>
+          {/* Segmented Control de Largura Total para Tipo (Despesa vs Receita) */}
+          <div className="ref-type-segmented">
+            <button
+              type="button"
+              className={`ref-type-pill ${isExpense ? 'active-expense' : ''}`}
+              onClick={() => setForm({ ...form, type: 'expense' })}
+            >
+              <ArrowUpRight size={16} strokeWidth={2.4} />
+              <span>Despesa</span>
+            </button>
+            <button
+              type="button"
+              className={`ref-type-pill ${!isExpense ? 'active-income' : ''}`}
+              onClick={() => setForm({ ...form, type: 'income', installment_total: '1' })}
+            >
+              <ArrowDownLeft size={16} strokeWidth={2.4} />
+              <span>Receita</span>
+            </button>
           </div>
 
           {/* Hero Amount Display */}
           <div className="ref-amount-hero-section">
             <span className="ref-amount-caption">Valor do lançamento</span>
             <div className="ref-amount-display">
-              <span className="ref-currency-prefix">R$</span>
+              <span className={`ref-currency-prefix ${isExpense ? 'prefix-expense' : 'prefix-income'}`}>R$</span>
               <input
                 placeholder="0,00"
                 type="number"
@@ -123,47 +89,79 @@ export function TransactionModal({
             </p>
           </div>
 
-          {/* Configurações de Data, Status e Parcelamento */}
-          <div className="ref-config-panel">
-            <div className="two-columns">
-              <div className="form-group">
-                <label className="form-label">Vencimento</label>
-                <input
-                  type="date"
-                  value={form.due_date}
-                  onChange={e => setForm({ ...form, due_date: e.target.value })}
-                  className="modern-input"
-                  required
-                />
-              </div>
+          {/* Card de Descrição e Categoria (100% responsivo, sem esmagar) */}
+          <div className="ref-recipient-card">
+            <div className="form-group">
+              <label className="form-label">Descrição</label>
+              <input
+                placeholder={isExpense ? 'Ex: Aluguel, Mercado, Luz...' : 'Ex: Salário, Freela, Venda...'}
+                value={form.description}
+                onChange={e => setForm({ ...form, description: e.target.value })}
+                required
+                className="modern-input ref-desc-field"
+                autoFocus
+              />
+            </div>
 
-              <div className="form-group">
-                <label className="form-label">Status</label>
-                <div className="ref-status-toggle">
-                  <button
-                    type="button"
-                    className={`ref-status-btn ${form.status === 'pending' ? 'active-pending' : ''}`}
-                    onClick={() => setForm({ ...form, status: 'pending' })}
-                  >
-                    <Clock size={13} strokeWidth={2.3} />
-                    <span>{isExpense ? 'A pagar' : 'A receber'}</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={`ref-status-btn ${form.status === 'paid' ? 'active-paid' : ''}`}
-                    onClick={() => setForm({ ...form, status: 'paid' })}
-                  >
-                    <CheckCircle2 size={13} strokeWidth={2.3} />
-                    <span>{isExpense ? 'Pago' : 'Recebido'}</span>
-                  </button>
+            <div className="form-group">
+              <label className="form-label">Categoria</label>
+              <div className="ref-category-select-row">
+                <div className={`ref-category-avatar ${isExpense ? 'avatar-expense' : 'avatar-income'}`}>
+                  {getCategoryIcon(form.category, { size: 18, strokeWidth: 2.2 })}
                 </div>
+                <select
+                  value={form.category}
+                  onChange={e => setForm({ ...form, category: e.target.value })}
+                  className="modern-select ref-full-cat-select"
+                  aria-label="Selecionar categoria"
+                >
+                  {categoryOptions.map(cat => (
+                    <option key={cat.name} value={cat.name}>{cat.name}</option>
+                  ))}
+                </select>
               </div>
+            </div>
+          </div>
+
+          {/* Configurações de Status, Data e Parcelamento */}
+          <div className="ref-config-panel">
+            <div className="form-group">
+              <label className="form-label">Status do pagamento</label>
+              <div className="ref-status-toggle">
+                <button
+                  type="button"
+                  className={`ref-status-btn ${form.status === 'pending' ? 'active-pending' : ''}`}
+                  onClick={() => setForm({ ...form, status: 'pending' })}
+                >
+                  <Clock size={14} strokeWidth={2.3} />
+                  <span>{isExpense ? 'A pagar' : 'A receber'}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`ref-status-btn ${form.status === 'paid' ? 'active-paid' : ''}`}
+                  onClick={() => setForm({ ...form, status: 'paid' })}
+                >
+                  <CheckCircle2 size={14} strokeWidth={2.3} />
+                  <span>{isExpense ? 'Pago' : 'Recebido'}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Data de vencimento</label>
+              <input
+                type="date"
+                value={form.due_date}
+                onChange={e => setForm({ ...form, due_date: e.target.value })}
+                className="modern-input"
+                required
+              />
             </div>
 
             {!isEditing && (
               <div className="form-group">
                 <label className="form-label">Repetição / Parcelamento</label>
-                <div className="two-columns">
+                <div className="ref-recurrence-grid">
                   <select
                     value={form.recurrence}
                     onChange={e => setForm({
@@ -180,27 +178,33 @@ export function TransactionModal({
                   </select>
 
                   {form.recurrence === 'none' ? (
-                    <input
-                      type="number"
-                      min="1"
-                      max="999"
-                      value={form.installment_total}
-                      onChange={e => setForm({ ...form, installment_total: e.target.value })}
-                      placeholder="1x (À vista)"
-                      title="Número de parcelas"
-                      className="modern-input"
-                    />
+                    <div className="ref-qty-input-wrap">
+                      <input
+                        type="number"
+                        min="1"
+                        max="999"
+                        value={form.installment_total}
+                        onChange={e => setForm({ ...form, installment_total: e.target.value })}
+                        placeholder="1"
+                        title="Número de parcelas"
+                        className="modern-input"
+                      />
+                      <span className="ref-qty-suffix">x</span>
+                    </div>
                   ) : (
-                    <input
-                      type="number"
-                      min="2"
-                      max="999"
-                      value={form.repeat_count}
-                      onChange={e => setForm({ ...form, repeat_count: e.target.value })}
-                      placeholder="Qtd. repetições"
-                      title="Quantas vezes repetir"
-                      className="modern-input"
-                    />
+                    <div className="ref-qty-input-wrap">
+                      <input
+                        type="number"
+                        min="2"
+                        max="999"
+                        value={form.repeat_count}
+                        onChange={e => setForm({ ...form, repeat_count: e.target.value })}
+                        placeholder="12"
+                        title="Quantas vezes repetir"
+                        className="modern-input"
+                      />
+                      <span className="ref-qty-suffix">vezes</span>
+                    </div>
                   )}
                 </div>
 

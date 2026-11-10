@@ -12,27 +12,27 @@ export function TransactionItem({ item, onClick, onToggleStatus, isPrivate = fal
 
   return (
     <article
-      className={`transaction-item ref-transaction-item ${state.className}`}
+      className={`transaction-item ref-transaction-item ${isIncome ? 'is-income-card' : 'is-expense-card'} ${state.className}`}
       onClick={onClick}
       tabIndex={0}
       role="button"
     >
       <div className="transaction-left">
         <div className={`tx-avatar-circle ${isIncome ? 'tx-income-circle' : 'tx-expense-circle'}`}>
-          {isIncome ? <ArrowDownLeft size={18} strokeWidth={2.3} /> : <ArrowUpRight size={18} strokeWidth={2.3} />}
+          {isIncome ? <ArrowDownLeft size={18} strokeWidth={2.4} /> : <ArrowUpRight size={18} strokeWidth={2.4} />}
         </div>
 
         <div className="transaction-info">
           <strong>{item.description}</strong>
-          <span className="tx-meta-line">
-            <span className="tx-cat-icon-inline">
-              {getCategoryIcon(item.category, { size: 13, strokeWidth: 2.2 })}
+          <div className="tx-meta-line">
+            <span className={`tx-cat-icon-inline ${isIncome ? 'cat-income' : 'cat-expense'}`}>
+              {getCategoryIcon(item.category, { size: 12, strokeWidth: 2.2 })}
             </span>
-            <span>
+            <span className="tx-meta-text">
               {item.category}
               {installmentOrCategory !== item.category ? ` • ${installmentOrCategory}` : ''}
             </span>
-          </span>
+          </div>
           <small className="tx-sub-time">
             {showDate ? `${getDayLabel(item.due_date)} • ` : ''}
             <em className={`tx-status-inline ${state.className}`}>{state.label}</em>

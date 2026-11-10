@@ -841,12 +841,18 @@ export function App() {
             <div className="ref-summary-columns">
               <div className="ref-summary-box income-box">
                 <div className="ref-summary-box-top">
-                  <span className="ref-dot income-dot" />
-                  <span className="ref-box-title">Receitas</span>
+                  <div className="ref-box-header-left">
+                    <span className="ref-summary-icon-badge income-icon-badge">
+                      <ArrowDownLeft size={16} strokeWidth={2.4} />
+                    </span>
+                    <div>
+                      <span className="ref-box-title">Receitas</span>
+                      <strong className="ref-box-main income-text">
+                        {formatMoney(summary.totalIncome, isPrivate)}
+                      </strong>
+                    </div>
+                  </div>
                 </div>
-                <strong className="ref-box-main income-text">
-                  {formatMoney(summary.totalIncome, isPrivate)}
-                </strong>
                 <div className="ref-box-breakdown">
                   <span>Recebido: <b>{formatMoney(summary.receivedIncome, isPrivate)}</b></span>
                   <span>A receber: <b>{formatMoney(summary.pendingIncome, isPrivate)}</b></span>
@@ -855,12 +861,18 @@ export function App() {
 
               <div className="ref-summary-box expense-box">
                 <div className="ref-summary-box-top">
-                  <span className="ref-dot expense-dot" />
-                  <span className="ref-box-title">Despesas</span>
+                  <div className="ref-box-header-left">
+                    <span className="ref-summary-icon-badge expense-icon-badge">
+                      <ArrowUpRight size={16} strokeWidth={2.4} />
+                    </span>
+                    <div>
+                      <span className="ref-box-title">Despesas</span>
+                      <strong className="ref-box-main expense-text">
+                        {formatMoney(summary.allExpenses, isPrivate)}
+                      </strong>
+                    </div>
+                  </div>
                 </div>
-                <strong className="ref-box-main expense-text">
-                  {formatMoney(summary.allExpenses, isPrivate)}
-                </strong>
                 <div className="ref-box-breakdown">
                   <span>Pago: <b>{formatMoney(summary.paidExpenses, isPrivate)}</b></span>
                   <span>A pagar: <b>{formatMoney(summary.pendingExpenses, isPrivate)}</b></span>

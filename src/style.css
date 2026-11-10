@@ -2818,48 +2818,77 @@ button:active {
 
 .ref-summary-box {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  padding: 13px;
   min-width: 0;
+}
+
+.ref-summary-box.income-box {
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(16, 185, 129, 0.24);
+}
+
+.ref-summary-box.expense-box {
+  background: linear-gradient(145deg, rgba(239, 68, 68, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(239, 68, 68, 0.24);
 }
 
 .ref-summary-box-top {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 5px;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
-.ref-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.ref-box-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+}
+
+.ref-box-header-left > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.ref-summary-icon-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
 }
 
-.income-dot {
-  background: #34d399;
-  box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+.income-icon-badge {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34d399;
 }
 
-.expense-dot {
-  background: #f87171;
-  box-shadow: 0 0 8px rgba(248, 113, 113, 0.6);
+.expense-icon-badge {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #f87171;
 }
 
 .ref-box-title {
-  font-size: 12px;
+  display: block;
+  font-size: 11.5px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: #9ca3af;
+  line-height: 1.2;
 }
 
 .ref-box-main {
   display: block;
-  font-size: clamp(14px, 4.2vw, 17px);
+  font-size: clamp(13px, 3.4vw, 14.5px);
   font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-bottom: 8px;
+  letter-spacing: -0.03em;
+  margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2876,9 +2905,9 @@ button:active {
 .ref-box-breakdown {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 4px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 11px;
   color: var(--text-muted);
 }
@@ -2894,7 +2923,7 @@ button:active {
   font-weight: 700;
 }
 
-/* ── 3. Seção de Transações na Home & Item Estilo Referência ────────────── */
+/* ── 3. Seção de Transações & Diferenciação Visual Despesa vs Receita ──── */
 .ref-home-tx-section {
   background: #13151c;
   border: 1px solid rgba(255, 255, 255, 0.07);
@@ -2931,10 +2960,13 @@ button:active {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.ref-tx-feed {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.ref-tx-feed,
+.date-items {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  width: 100%;
+  min-width: 0;
 }
 
 .ref-empty-inline {
@@ -2954,20 +2986,43 @@ button:active {
   font-weight: 700;
 }
 
-/* Item de Transação Estilo Referência */
+/* Item de Transação Blindado contra Quebra Lateral + Cores Claras */
 .ref-transaction-item {
   display: flex !important;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 11px 12px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 12px 13px !important;
   border-radius: 16px !important;
   background: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-sizing: border-box !important;
+  overflow: hidden;
+}
+
+/* Receita: Identidade Verde Esmeralda imediata */
+.ref-transaction-item.is-income-card {
+  border-left: 3.5px solid #10b981 !important;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+}
+
+/* Despesa: Identidade Vermelho Coral imediata */
+.ref-transaction-item.is-expense-card {
+  border-left: 3.5px solid #ef4444 !important;
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+}
+
+/* Despesa Atrasada: Identidade Âmbar de Alerta */
+.ref-transaction-item.is-expense-card.overdue {
+  border-left: 3.5px solid #f59e0b !important;
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
 }
 
 .ref-transaction-item:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 .transaction-left {
@@ -2975,39 +3030,74 @@ button:active {
   align-items: center;
   gap: 10px;
   min-width: 0;
-  flex: 1;
+  flex: 1 1 0%;
+  overflow: hidden;
+}
+
+.transaction-info {
+  min-width: 0;
+  flex: 1 1 0%;
+  overflow: hidden;
 }
 
 .tx-avatar-circle {
   width: 38px;
   height: 38px;
-  border-radius: 50%;
+  border-radius: 12px;
   display: grid;
   place-items: center;
   flex-shrink: 0;
 }
 
 .tx-income-circle {
-  background: rgba(16, 185, 129, 0.14);
+  background: rgba(16, 185, 129, 0.16);
+  border: 1px solid rgba(16, 185, 129, 0.32);
   color: #34d399;
 }
 
 .tx-expense-circle {
-  background: rgba(255, 255, 255, 0.06);
-  color: #34d399;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
 }
 
 .ref-transaction-item.overdue .tx-expense-circle {
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.35);
   color: #fbbf24;
 }
 
 .tx-meta-line {
-  font-size: 12px !important;
-  color: #8e95a5 !important;
+  display: flex !important;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.tx-meta-text {
+  font-size: 12px;
+  color: #9ca3af;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+}
+
+.tx-cat-icon-inline {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.tx-cat-icon-inline.cat-income {
+  color: #34d399;
+}
+
+.tx-cat-icon-inline.cat-expense {
+  color: #f87171;
 }
 
 .tx-sub-time {
@@ -3015,11 +3105,14 @@ button:active {
   font-size: 11px;
   color: #687082;
   margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tx-status-inline {
   font-style: normal;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .tx-status-inline.overdue {
@@ -3035,27 +3128,39 @@ button:active {
   color: #f87171;
 }
 
+.tx-status-inline.expense-paid {
+  color: #9ca3af;
+}
+
+.transaction-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .tx-amount-income {
   color: #34d399 !important;
   font-size: 14.5px !important;
-  font-weight: 700 !important;
+  font-weight: 800 !important;
   text-decoration: none !important;
   white-space: nowrap;
 }
 
 .tx-amount-expense {
-  color: #ffffff !important;
+  color: #f87171 !important;
   font-size: 14.5px !important;
-  font-weight: 700 !important;
+  font-weight: 800 !important;
   text-decoration: none !important;
   white-space: nowrap;
 }
 
 .ref-transaction-item.paid .tx-amount-expense {
-  color: #9ca3af !important;
+  color: #fca5a5 !important;
+  opacity: 0.78;
 }
 
-/* Ajustes da página de Extrato (Transactions) */
+/* Ajustes da página de Extrato (Transactions) e Filtros */
 .ref-tx-page-header {
   display: flex;
   align-items: center;
@@ -3077,6 +3182,16 @@ button:active {
   border-radius: 24px;
 }
 
+/* Evita que os selects de filtro cortem o texto verticalmente */
+.status-filter {
+  height: 38px !important;
+  padding: 0 12px !important;
+  line-height: normal !important;
+  border-radius: 999px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
 .forecast-row {
   margin-top: 4px !important;
   margin-bottom: 14px !important;
@@ -3089,7 +3204,7 @@ button:active {
   background: rgba(255, 255, 255, 0.03) !important;
 }
 
-/* ── 4. Floating Pill Bottom Navigation (Corrigido sem conflito de width) ─ */
+/* ── 4. Floating Pill Bottom Navigation ────────────────────────────────── */
 .bottom-nav-wrapper {
   position: fixed;
   left: 0;
@@ -3147,7 +3262,6 @@ button:active {
   color: #ffffff !important;
 }
 
-/* Aba ativa se expande como pílula branca igual à referência */
 .bottom-nav.ref-floating-dock button.dock-item.active {
   width: auto !important;
   min-width: 112px !important;
@@ -3173,7 +3287,7 @@ button:active {
   color: #090a0f !important;
 }
 
-/* ── 5. Modais (Transação & Perfil) Estilo Referência ───────────────────── */
+/* ── 5. Modais (Transação & Perfil) 100% Responsivos ───────────────────── */
 .ref-modal-card {
   display: flex !important;
   flex-direction: column !important;
@@ -3191,12 +3305,18 @@ button:active {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 18px;
+  padding: 15px 18px;
   background:
     radial-gradient(circle at 80% 20%, rgba(167, 243, 208, 0.38), transparent 55%),
     linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%);
   color: #ffffff;
   flex-shrink: 0;
+}
+
+.ref-modal-banner.banner-expense {
+  background:
+    radial-gradient(circle at 80% 20%, rgba(254, 202, 202, 0.25), transparent 55%),
+    linear-gradient(135deg, #ef4444 0%, #dc2626 55%, #991b1b 100%);
 }
 
 .ref-back-circle-btn {
@@ -3223,125 +3343,56 @@ button:active {
 }
 
 .ref-modal-body {
-  padding: 16px 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  overflow-y: auto;
-}
-
-.ref-recipient-card {
-  background: #161821;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
-  padding: 14px;
+  padding: 16px 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow-y: auto;
 }
 
-.ref-recipient-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.ref-recipient-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #9ca3af;
-}
-
-.ref-type-pills {
-  display: flex;
-  gap: 4px;
-  background: rgba(0, 0, 0, 0.35);
-  padding: 3px;
-  border-radius: 999px;
+/* Segmented Control de Largura Total para Despesa vs Receita */
+.ref-type-segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: #161821;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 4px;
+  border-radius: 16px;
 }
 
 .ref-type-pill {
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 12px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 13.5px;
   font-weight: 700;
   background: transparent;
   color: #9ca3af;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
 }
 
 .ref-type-pill.active-expense {
   background: #ef4444;
   color: #ffffff;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
 }
 
 .ref-type-pill.active-income {
   background: #10b981;
   color: #052e16;
-}
-
-.ref-desc-field {
-  width: 100% !important;
-}
-
-.ref-recipient-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding-top: 4px;
-}
-
-.ref-category-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.06);
-  display: grid;
-  place-items: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.ref-recipient-details {
-  flex: 1;
-  min-width: 0;
-}
-
-.ref-cat-title {
-  display: block;
-  font-size: 14px;
-  font-weight: 700;
-  color: #ffffff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.ref-recipient-sub {
-  display: block;
-  font-size: 11.5px;
-  color: #8e95a5;
-}
-
-.ref-change-pill-select {
-  width: auto !important;
-  max-width: 135px;
-  padding: 7px 12px !important;
-  border-radius: 999px !important;
-  background: rgba(255, 255, 255, 0.07) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  color: #ffffff !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
 }
 
 /* Display Centralizado do Valor */
 .ref-amount-hero-section {
   text-align: center;
-  padding: 6px 12px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10px 12px;
+  background: #161821;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 20px;
 }
 
@@ -3352,7 +3403,6 @@ button:active {
   text-transform: uppercase;
   letter-spacing: 0.6px;
   color: #8e95a5;
-  margin-top: 4px;
 }
 
 .ref-amount-display {
@@ -3369,6 +3419,14 @@ button:active {
   color: #10b981;
 }
 
+.ref-currency-prefix.prefix-expense {
+  color: #f87171;
+}
+
+.ref-currency-prefix.prefix-income {
+  color: #34d399;
+}
+
 .ref-hero-amount-input {
   width: 150px !important;
   text-align: center;
@@ -3376,7 +3434,7 @@ button:active {
   border: none !important;
   background: transparent !important;
   color: #ffffff !important;
-  font-size: 34px !important;
+  font-size: 32px !important;
   font-weight: 800 !important;
   letter-spacing: -0.03em;
   box-shadow: none !important;
@@ -3387,13 +3445,13 @@ button:active {
 }
 
 .ref-currency-tag {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #6b7280;
 }
 
 .ref-balance-hint {
-  margin: 0 0 6px;
+  margin: 0;
   font-size: 12px;
   color: #8e95a5;
 }
@@ -3406,6 +3464,53 @@ button:active {
   color: #f87171;
 }
 
+/* Card de Descrição e Categoria */
+.ref-recipient-card {
+  background: #161821;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ref-desc-field {
+  width: 100% !important;
+}
+
+.ref-category-select-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.ref-category-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  color: #34d399;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.ref-category-avatar.avatar-expense {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.28);
+  color: #f87171;
+}
+
+.ref-full-cat-select {
+  flex: 1;
+  width: 100% !important;
+  min-width: 0;
+}
+
+/* Painel de Status, Data e Parcelamento */
 .ref-config-panel {
   background: #161821;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -3420,18 +3525,25 @@ button:active {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.3);
   padding: 4px;
   border-radius: 14px;
-  height: 46px;
+  min-height: 46px;
+  width: 100%;
 }
 
 .ref-status-btn {
   border-radius: 10px;
   background: transparent;
   color: #9ca3af;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
+  padding: 8px 10px;
+  white-space: nowrap;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
 }
 
 .ref-status-btn.active-pending {
@@ -3444,6 +3556,32 @@ button:active {
   background: rgba(16, 185, 129, 0.2);
   color: #34d399;
   border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.ref-recurrence-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.ref-qty-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ref-qty-input-wrap input {
+  padding-right: 44px !important;
+}
+
+.ref-qty-suffix {
+  position: absolute;
+  right: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #8e95a5;
+  pointer-events: none;
 }
 
 .installment-helper-box {
@@ -3467,9 +3605,9 @@ button:active {
 }
 
 .installment-mode-switch button {
-  padding: 6px 8px;
+  padding: 7px 8px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   background: transparent;
   color: #9ca3af;
@@ -3502,6 +3640,7 @@ button:active {
   gap: 8px;
   box-shadow: 0 8px 24px rgba(255, 255, 255, 0.12);
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .ref-white-submit-btn:hover {
@@ -3510,7 +3649,7 @@ button:active {
   box-shadow: 0 10px 28px rgba(52, 211, 153, 0.25);
 }
 
-/* ── 6. Modal de Perfil (Corrigido sem margens duplicadas ou caixa dupla) ─ */
+/* ── 6. Modal de Perfil ────────────────────────────────────────────────── */
 .profile-modal-body {
   gap: 12px !important;
 }
@@ -3641,9 +3780,8 @@ button:active {
     grid-template-columns: 1fr;
   }
 
-  .two-columns {
+  .ref-recurrence-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
   }
 }
 
@@ -3672,7 +3810,8 @@ button svg,
 .setting-icon-box svg,
 .ref-action-icon-circle svg,
 .tx-cat-icon-inline svg,
-.legend-cat-icon svg {
+.legend-cat-icon svg,
+.ref-summary-icon-badge svg {
   flex-shrink: 0;
   display: block;
 }
@@ -3696,19 +3835,6 @@ button svg,
   display: grid;
   place-items: center;
   color: #ffffff;
-}
-
-.tx-meta-line {
-  display: inline-flex !important;
-  align-items: center;
-  gap: 5px;
-  max-width: 100%;
-}
-
-.tx-cat-icon-inline {
-  display: inline-flex;
-  align-items: center;
-  color: #34d399;
 }
 
 .legend-cat-icon {
@@ -3741,20 +3867,13 @@ button svg,
   place-items: center;
 }
 
-.ref-category-avatar {
-  background: rgba(16, 185, 129, 0.14) !important;
-  border: 1px solid rgba(16, 185, 129, 0.28) !important;
-  color: #34d399 !important;
-}
-
-.ref-type-pill,
-.ref-status-btn,
 .status-action-button {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 6px !important;
 }
+
 
 
 
